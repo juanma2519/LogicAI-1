@@ -472,13 +472,16 @@
         <c-card class="shadow-sm border-0 h-100">
           <c-card-header><strong>Quick Wins</strong></c-card-header>
           <c-card-body>
-            <ul class="small mb-0">
-              <li *ngFor="let q of quickWins">
-                <strong>{{ q.titulo }}</strong> — {{ q.accion }}
-                <span class="text-muted" *ngIf="q.kpi"> · KPI: {{ q.kpi }}</span>
-                <span class="text-muted" *ngIf="q.due_in_dias"> · {{ q.due_in_dias }} días</span>
-              </li>
-            </ul>
+                        <div class="vstack gap-3">
+              <div *ngFor="let r of quickWins">
+                <strong>{{ r.titulo }}</strong>
+                <div class="small text-muted">{{ r.accion }}</div>
+                <ul class="small mt-2">
+                  <li>· KPI: {{ q.kpi }}</li>
+                  <li>· {{ q.due_in_dias }} días</li>
+                </ul>
+              </div>
+            </div>
           </c-card-body>
         </c-card>
       </div>
