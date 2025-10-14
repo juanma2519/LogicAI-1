@@ -5,8 +5,6 @@
         <c-card-group>
           <c-card class="p-4">
             <c-card-body>
-              <img [src]="'../../../assets/logicAI.png'" alt="Avatar" class="rounded-circle shadow-sm"
-          style="width: 40px; height: 40px; object-fit: cover;" />
               <form cForm [formGroup]="form" (ngSubmit)="submit()">
                 <h1>Login</h1>
                 <p class="text-body-secondary">Entra con tu cuenta</p>
@@ -40,6 +38,8 @@
           </c-card>
           <c-card [ngStyle]="{'minWidth.%': 44}" class="text-white bg-primary py-5">
             <c-card-body class="text-center">
+              <img [src]="'../../../assets/logicAI.png'" alt="Avatar" class="rounded-circle shadow-sm"
+          style="width: 50%; margin-left: 22%;height: 150px; object-fit: cover;" />
               <div>
                 <h2>Registro</h2>
                 <p>
