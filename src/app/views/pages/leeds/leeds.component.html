@@ -1,0 +1,234 @@
+<app-widgets-demo [pageType]="'home'" />
+<!-- Ajuste: el formulario ahora recibe listas de conceptos/estados y trabaja con IDs -->
+<app-lead-form [lead]="leadSeleccionado" [visible]="formVisible" [detail]="detail" [conceptos]="conceptos"
+    [estados]="estados" (save)="guardarLead($event)" (close)="formVisible = false; leadFlag = false;">
+</app-lead-form>
+
+<!-- Modal de generación -->
+<c-modal [visible]="showGenModal && !confirmGenerateModal" alignment="center" (close)="closeGenerateModal()" backdrop="static">
+  <c-modal-header>
+    <h5 class="modal-title">Generar leads</h5>
+  </c-modal-header>
+
+  <form [formGroup]="generateForm" (ngSubmit)="abrirConfirmacion()" cForm>
+    <c-modal-body>
+            <!-- Nombre -->
+      <div class="mb-3 d-flex align-items-center">
+        <label cLabel for="nombre" style="width: 20%; margin-right: 5%;">Negocio</label>
+        <select cSelect id="negocio" formControlName="negocio">
+          <option value="" disabled selected>Selecciona un negocio</option>
+          <option *ngFor="let n of negocios" [value]="n">{{ n }}</option>
+        </select>
+        <div class="text-danger small mt-1" *ngIf="generateForm.get('negocio')?.invalid && generateForm.get('negocio')?.touched">
+          Campo requerido
+        </div>
+      </div>
+
+      <div class="mb-3 b-3 d-flex align-items-center">
+        <label cLabel for="nombre" style="width: 20%; margin-right: 5%;">Ciudad</label>
+        <select cSelect id="ciudad" formControlName="ciudad">
+          <option value="" disabled selected>Selecciona una ciudad</option>
+          <option *ngFor="let c of ciudades" [value]="c">{{ c }}</option>
+        </select>
+        <div class="text-danger small mt-1 ml-2" *ngIf="generateForm.get('ciudad')?.invalid && generateForm.get('ciudad')?.touched">
+          Campo requerido
+        </div>
+      </div>
+      
+
+    </c-modal-body>
+
+    <c-modal-footer>
+      <button type="button" cButton color="secondary" (click)="closeGenerateModal()" [disabled]="generating">Cancelar</button>
+      <button type="submit" cButton color="primary" [disabled]="generateForm.invalid || generating">
+        <span *ngIf="!generating">Lanzar búsqueda</span>
+        <span *ngIf="generating">Lanzando…</span>
+      </button>
+    </c-modal-footer>
+  </form>
+</c-modal>
+
+<!-- MODAL DE CONFIRMACIÓN -->
+<c-modal [visible]="showGenModal && confirmGenerateModal" alignment="center" (close)="cancelarGeneracion()"  backdrop="static">
+  <c-modal-header>
+    <h5 class="modal-title">Confirmar generación de leads</h5>
+  </c-modal-header>
+
+  <c-modal-body>
+    <p class="mb-3">
+      Este proceso generará nuevos <strong>leads</strong> basados en los criterios seleccionados.
+    </p>
+
+    <div class="alert alert-info small">
+      <strong>¿Qué implica?</strong><br>
+      - Se realizará una búsqueda automática de negocios por tipo y ciudad.<br>
+      - Los resultados serán analizados por IA y añadidos directamente a tu base de datos.<br>
+      - Podrás verlos en tu panel de leads una vez finalice la carga.<br>
+      - Duración estimada: <strong>3 minutos</strong>.
+    </div>
+
+    <div class="alert alert-warning small mt-3">
+      ⚠️ Al continuar, autorizas la inserción de nuevos registros en tu base de datos.
+    </div>
+  </c-modal-body>
+
+  <c-modal-footer>
+    <button type="button" cButton color="secondary" (click)="cancelarGeneracion()">Cancelar</button>
+    <button type="button" cButton color="primary" (click)="confirmarGeneracion()">Confirmar y generar</button>
+  </c-modal-footer>
+</c-modal>
+
+<h3 class="m-4" >Tus Leads en un vistazo</h3>
+<p class="m-4">
+    En esta sección encontrarás un listado actualizado de todos los usuarios que se han registrado,
+    solicitado información o mostrado interés en tus productos o servicios. Gestiona y analiza tus leads de manera fácil
+    y rápida para optimizar tu seguimiento y aumentar tus oportunidades de negocio.
+</p>
+<div class="mb-3 p-4 border rounded bg-dark" *ngIf="generating" >
+  <label class="small text-secondary mb-3 text-light">Progreso de la generación</label>
+  <c-progress height="20px" color="{{progressColor}}" [value]="progress" variant="striped">
+    <span *ngIf="progress < 100">{{ progress | number:'1.0-0' }}%</span>
+    <span *ngIf="progress >= 100" class="text-success fw-semibold">
+      {{ progressText }}
+    </span>
+  </c-progress>
+</div>
+<div class="d-flex align-items-center gap-2 mb-3">
+    <button cButton color="primary" size="sm" [cPopover]="'Crear Lead'" [cPopoverTrigger]="'hover'"
+        [cPopoverPlacement]="'top'" (click)="nuevoLead()">
+        Añadir
+    </button>
+
+    <button cButton color="primary" size="sm" [cPopover]="'Importar Leads desde xlsx o csv'" [cPopoverTrigger]="'hover'"
+        [cPopoverPlacement]="'top'" (click)="importarLeads()">
+        Importar
+    </button>
+
+    <button cButton color="danger" size="sm" [cPopover]="'Importar Leads desde xlsx o csv'" [cPopoverTrigger]="'hover'"
+        [cPopoverPlacement]="'top'" (click)="generarLeads()" [disabled]="generating">
+        Generar Leads
+    </button>
+
+    <!-- Filtros rápidos -->
+    <div class="ms-auto d-flex align-items-center gap-2">
+        <select cSelect style="cursor:pointer;" class="form-select form-select-sm" [(ngModel)]="filtroConceptoId"
+            (ngModelChange)="aplicarFiltros()">
+            <option [ngValue]="null">Concepto: Todos</option>
+            <option *ngFor="let c of conceptos" [ngValue]="c.id">{{ c.nombre }}</option>
+        </select>
+
+        <select cSelect style="cursor:pointer;" class="form-select form-select-sm" [(ngModel)]="filtroEstadoId"
+            (ngModelChange)="aplicarFiltros()">
+            <option [ngValue]="null">Estado: Todos</option>
+            <option *ngFor="let e of estados" [ngValue]="e.id">{{ e.nombre }}</option>
+        </select>
+        <select cSelect style="cursor:pointer;" class="form-select form-select-sm" [(ngModel)]="filtroCiudad" 
+            (ngModelChange)="aplicarFiltros()">
+          <option [ngValue]="null">Elige ciudad</option>
+          <option *ngFor="let c of ciudades" [value]="c">{{ c }}</option>
+        </select>
+    </div>
+</div>
+
+<!-- Barra superior -->
+<div class="d-flex align-items-center gap-2 mb-2" style="cursor:pointer;">
+    <div class="ms-auto align-items-center">
+        <label class="mb-0 small text-secondary">Filas por página</label>
+        <select style="cursor:pointer;" cSelect class="form-select form-select-sm" [(ngModel)]="pageSize"
+            (ngModelChange)="onPageSizeChange($event)">
+            <option [ngValue]="5">5</option>
+            <option [ngValue]="10">10</option>
+            <option [ngValue]="25">25</option>
+            <option [ngValue]="50">50</option>
+        </select>
+        <span class="small text-secondary">
+            Mostrando {{ totalItems === 0 ? 0 : (page - 1) * pageSize + 1 }}–{{ Math.min(page * pageSize, totalItems) }}
+            de {{ totalItems }}
+        </span>
+    </div>
+</div>
+
+<table cTable [hover]="true" [responsive]="true" small>
+    <thead>
+        <tr>
+            <th scope="col" style="width:48px">#</th>
+            <th scope="col">Fecha Entrada</th>
+            <th scope="col">Empresa</th>
+            <th scope="col">Web</th>
+            <th scope="col">Telefono</th>
+            <th scope="col">Correo</th>
+            <th scope="col">Propietario</th>
+            <th scope="col">Concepto</th>
+            <th scope="col">Estado</th>
+            <th style="width:160px">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let lead of pagedLeads; let i = index">
+            <th scope="row">{{lead.id}}</th>
+            <td><span class="badge bg-success text-dark border text-truncate d-inline-block" style="max-width:220px">{{
+                    lead.fecha_entrada | date:'yyyy-MM-dd' }}</span></td>
+            <td><span class="text-light text-truncate d-inline-block" style="max-width:220px">{{ lead.empresa }}</span>
+            </td>
+            <td><span class="badge bg-warning text-dark border text-truncate d-inline-block" style="max-width:220px">{{
+                    lead.web }}</span></td>
+            <td><span class="text-light text-truncate d-inline-block" style="max-width:220px">{{ lead.telefono }}</span>
+            </td>
+            <td><span class="badge bg-danger text-dark text-truncate d-inline-block" style="max-width:220px">{{
+                    lead.correo }}</span></td>
+            <td>{{ lead.propietario }}</td>
+            <td>
+                <span class="badge text-bg-light border">
+                    {{ getConceptoNombre(lead.concepto_id) || lead.concepto_nombre || '—' }}
+                </span>
+            </td>
+            <td>
+                <span class="badge" [ngClass]="{
+            'text-bg-success': (lead.estado?.nombre || lead.estado_nombre) === 'Cerrado',
+            'text-bg-danger': (lead.estado?.nombre || lead.estado_nombre) === 'Perdido',
+            'text-bg-warning': (lead.estado?.nombre || lead.estado_nombre)?.startsWith('Pendiente'),
+            'text-bg-secondary': !(lead.estado?.nombre || lead.estado_nombre)
+          }">
+                    {{ getEstadoNombre(lead.concepto_id) || lead.estado_nombre || '—' }}
+                </span>
+            </td>
+            <td class="d-flex" style="padding: 5px 20px;">
+                <button cButton color="primary" size="sm" [cPopover]="'Ver Detalle'" class="me-1 mb-1" [cPopoverTrigger]="'hover'"
+                    [cPopoverPlacement]="'top'" (click)="verDetalle(lead)" class="me-2">
+                    <c-icon name="cil-comment-square"></c-icon>
+                </button>
+
+                <button cButton color="info" size="sm" [cPopover]="'Editar Lead'" class="me-1 mb-1" [cPopoverTrigger]="'hover'"
+                    class="me-2" [cPopoverPlacement]="'top'" (click)="editarLead(lead)">
+                    <c-icon name="cil-pencil"></c-icon>
+                </button>
+
+                <button cButton color="danger" size="sm" [cPopover]="'Eliminar Lead'" class="me-1 mb-1" [cPopoverTrigger]="'hover'"
+                    class="me-2" [cPopoverPlacement]="'top'" (click)="borrarLead(lead)">
+                    <c-icon name="cil-trash"></c-icon>
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Paginación -->
+<ul cPagination style="cursor: pointer;" class="pagination pagination-sm justify-content-end mt-3" *ngIf="!showGenModal && !leadFlag">
+    <li cPageItem [disabled]="page === 1">
+        <a cPageLink (click)="goTo(1)">&laquo;</a>
+    </li>
+    <li cPageItem [disabled]="page === 1">
+        <a cPageLink (click)="goTo(page - 1)">Anterior</a>
+    </li>
+
+    <li cPageItem *ngFor="let p of pages" [active]="page === p">
+        <a cPageLink (click)="goTo(p)">{{ p }}</a>
+    </li>
+
+    <li cPageItem [disabled]="page === totalPages">
+        <a cPageLink (click)="goTo(page + 1)">Siguiente</a>
+    </li>
+    <li cPageItem [disabled]="page === totalPages">
+        <a cPageLink (click)="goTo(totalPages)">&raquo;</a>
+    </li>
+</ul>

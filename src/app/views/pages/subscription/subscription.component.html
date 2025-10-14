@@ -1,0 +1,82 @@
+<c-card class="p-4 shadow-lg mb-4">
+    <c-row class="g-4 p-4">
+        <c-col sm="6" xl="6">
+            <h3 class="mb-3">Suscripciones</h3>
+            <p class="text-muted mb-3">
+                Convierte tu negocio con nuestras suscripciones.
+            </p>
+        </c-col>
+    </c-row>
+
+    <!-- Tarjetas de suscripción -->
+    <c-row class="g-4 p-4">
+        <c-col sm="4" xl="4">
+            <c-card class="mb-4" xl="3" style="min-height: 400px;">
+                <h5 style="width: 80%;font-size: 30px;text-align: center;margin: 2% 10%;">Crear contenido</h5>
+                <p style="width: 80%;font-size: 35px;text-align: center;margin: 4% 10%;">
+                    <span style="font-size: 40px; font-weight: 900;">199€</span>
+                    <span style="font-size: 18px;vertical-align: bottom;">/mes</span>
+                </p>
+                <ul>
+                    <li>Crea contenido para redes sociales y blogs.</li>
+                    <li>Genera ideas y textos a imágenes, videos, subtítulos y música.</li>
+                </ul>
+                <button cButton class="px-4" color="primary"
+                    style="bottom: 0px;position: absolute;width: 80%;margin: 10%;">Pagar</button>
+            </c-card>
+        </c-col>
+
+        <c-col sm="4" xl="4">
+            <c-card class="mb-4" xl="3" style="min-height: 400px;">
+                <h5 style="width: 80%;font-size: 30px;text-align: center;margin: 2% 10%;">Gestión de citas</h5>
+                <p style="width: 80%;font-size: 35px;text-align: center;margin: 4% 10%;">
+                    <span style="font-size: 40px; font-weight: 900;">299€</span>
+                    <span style="font-size: 18px;vertical-align: bottom;">/mes</span>
+                </p>
+                <ul>
+                    <li>Genera citas y turnos para tus clientes.</li>
+                    <li>Notifica a tus clientes sobre sus citas programadas.</li>
+                    <li>Crea un sistema de gestión de citas completo.</li>
+                </ul>
+                <button cButton class="px-4" color="primary"
+                    style="bottom: 0px;position: absolute;width: 80%;margin: 10%;">Pagar</button>
+            </c-card>
+        </c-col>
+
+        <c-col sm="4" xl="4">
+            <c-card class="mb-4" xl="3" style="min-height: 400px;">
+                <h5 style="width: 80%;font-size: 30px;text-align: center;margin: 2% 10%;">Mediana empresa</h5>
+                <p style="width: 80%;font-size: 35px;text-align: center;margin: 4% 10%;">
+                    <span style="font-size: 40px; font-weight: 900;">599€</span>
+                    <span style="font-size: 18px;vertical-align: bottom;">/mes</span>
+                </p>
+                <ul>
+                    <li>Accede a herramientas de gestión para empresas.</li>
+                    <li>Crea un sistema de call center y atención al cliente.</li>
+                    <li>Genera informes y estadísticas sobre tu negocio.</li>
+                </ul>
+                <button cButton class="px-4" color="primary"
+                    style="bottom: 0px;position: absolute;width: 80%;margin: 10%;">Pagar</button>
+            </c-card>
+        </c-col>
+    </c-row>
+    <c-row class="g-4 p-4">
+        <c-card class="mb-4" xl="3" style="min-height: 550px;">
+            <!-- Formulario para casos especiales -->
+            <c-input-group class="mb-3">
+                <p style="width: 80%;font-size: 30px;text-align: center;margin: 2% 10%;">¿Quieres que nos pongamos en contacto contigo para asesorarte?</p>
+                <p style="width: 80%;font-size: 20px;text-align: left;margin: 2% 10%;">Describenos tu caso de uso</p>
+                <textarea cFormControl placeholder="Descripción de su caso" type="text" [(ngModel)]="serviceSpecial"
+                    style="width: 80%; margin: 0% 10%;"></textarea>
+            </c-input-group>
+            <p style="width: 80%;font-size: 20px;text-align: left;margin: 2% 10%;">Déjanos también tu teléfono si lo deseas.</p>
+            <c-input-group class="mb-3">
+                <input cFormControl [(ngModel)]="phone" type="tel" style="width: 80%; margin: 0% 10%;" placeholder="Teléfono móvil de contacto" />
+            </c-input-group>
+            <button cButton class="px-4" color="primary" style="bottom: 0px;width: 60%;margin: 5% 20%;">
+                Enviar
+            </button>
+        </c-card>
+    </c-row>
+
+</c-card>

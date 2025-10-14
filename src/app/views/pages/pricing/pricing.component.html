@@ -1,0 +1,60 @@
+<app-pricing-widget></app-pricing-widget>
+<c-container class="mt-4">
+  <c-card class="p-3 shadow-sm">
+    <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+      <h4 class="mb-0">Pricing Models</h4>
+      <span class="text-muted ms-auto" *ngIf="!loading">{{ view.length }} modelos</span>
+    </div>
+
+    <div class="row g-2 mb-3">
+      <div class="col-12 col-md-4">
+        <input cFormControl class="form-control" placeholder="Buscar por modelo/familia..." [(ngModel)]="q" (ngModelChange)="applyFilters()" />
+      </div>
+      <div class="col-12 col-md-3">
+        <select class="form-select" [(ngModel)]="family" (change)="applyFilters()">
+          <option value="all">Todas las familias</option>
+          <option *ngFor="let f of families" [value]="f">{{ f }}</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-2">
+        <button cButton color="secondary" variant="outline" (click)="load()">
+          <c-icon name="cil-reload" class="me-1"></c-icon> Recargar
+        </button>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table cTable striped hover responsive class="align-middle">
+        <thead>
+          <tr>
+            <th>Modelo</th>
+            <th>Familia</th>
+            <th>Tier</th>
+            <th>Precio I/O (1M tok)</th>
+            <th>Imagen</th>
+            <th>Audio</th>
+            <th>TTS</th>
+            <th>Vídeo</th>
+            <th>Moneda</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of view">
+            <td class="fw-semibold">{{ m.model_name }}</td>
+            <td><span class="badge bg-secondary">{{ m.family || 'otros' }}</span></td>
+            <td><span class="badge bg-info text-dark">{{ m.tier || '-' }}</span></td>
+            <td>{{ priceIO(m) }}</td>
+            <td>{{ m.price_image_per_unit != null ? ('$' + m.price_image_per_unit) : '-' }}</td>
+            <td>{{ m.price_audio_transc_per_min != null ? ('$' + m.price_audio_transc_per_min + '/min') : '-' }}</td>
+            <td>{{ m.price_tts_per_1k_chars != null ? ('$' + m.price_tts_per_1k_chars + '/1k') : '-' }}</td>
+            <td>{{ m.price_video_per_second != null ? ('$' + m.price_video_per_second + '/s') : '-' }}</td>
+            <td>{{ m.currency }}</td>
+          </tr>
+          <tr *ngIf="!loading && !view.length">
+            <td colspan="9" class="text-center text-muted py-4">Sin resultados</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </c-card>
+</c-container>

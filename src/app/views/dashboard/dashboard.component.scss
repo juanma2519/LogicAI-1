@@ -1,0 +1,91 @@
+/* ===== Tokens ===== */
+$bg: #0b1220;
+$bg-2: #0f172a;
+$stroke: rgba(255,255,255,0.1);
+$text: #e5e7eb;
+$text-dim: #94a3b8;
+$primary: #3b82f6;
+$primary-2: #60a5fa;
+$shadow: 0 8px 28px rgba(0,0,0,.45);
+
+/* ===== Cards ===== */
+c-card {
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid $stroke;
+  border-radius: 16px;
+  box-shadow: $shadow;
+  overflow: hidden;
+
+  &.my-4, &.mb-4 {
+    margin-bottom: 2rem !important;
+  }
+}
+
+c-card-header {
+  background: transparent;
+  color: $text;
+  font-weight: 600;
+  font-size: 1.05rem;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+/* ===== Textos ===== */
+.text-body-secondary { color: $text-dim !important; }
+.fw-semibold { font-weight: 600 !important; }
+
+/* ===== Progress ===== */
+c-progress {
+  border-radius: 20px;
+  background: rgba(255,255,255,.05);
+  height: 6px !important;
+
+  &[color="info"]    { --cui-progress-bar-bg: #3b82f6; }
+  &[color="danger"]  { --cui-progress-bar-bg: #ef4444; }
+  &[color="warning"] { --cui-progress-bar-bg: #f59e0b; }
+  &[color="success"] { --cui-progress-bar-bg: #10b981; }
+}
+
+/* ===== Tablas ===== */
+table[cTable] {
+  background: transparent;
+  color: $text;
+  border-color: rgba(255,255,255,.05);
+
+  thead {
+    background: rgba(255,255,255,.04);
+    th {
+      color: $text-dim;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+  }
+
+  tbody tr {
+    &:hover {
+      background: rgba(255,255,255,.03);
+    }
+    td {
+      border-color: rgba(255,255,255,.05);
+    }
+  }
+}
+
+/* ===== Avatares ===== */
+c-avatar {
+  border: 2px solid rgba(255,255,255,.08);
+  border-radius: 50%;
+}
+
+/* ===== Badges ===== */
+.badge.bg-info    { background: $primary !important; }
+.badge.bg-danger  { background: #ef4444 !important; }
+.badge.bg-warning { background: #f59e0b !important; }
+.badge.bg-success { background: #10b981 !important; }
+
+/* ===== Botones extra (ej. Options) ===== */
+button[cButton].btn-link {
+  color: $text-dim;
+  &:hover { color: $primary; }
+}

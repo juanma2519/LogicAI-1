@@ -1,0 +1,110 @@
+<c-container class="mt-4">
+    <form [formGroup]="form"> <!-- ⬅️ AQUÍ -->
+        <!-- TEXT → IMAGE -->
+        <c-card class="p-4 shadow-sm m-5">
+            <h4 class="mb-2">Text → Image</h4>
+            <p class="text-muted">1) Un modelo de <strong>texto</strong> redacta el prompt perfecto.</p>
+            <p class="text-muted"> 2) Un modelo de <strong>imagen</strong> genera la imagen final.</p>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Modelo de Texto (prompting)</label>
+                    <select class="form-select" formControlName="textModel_for_TextToImage" cSelect sizing="lg">
+                        <option [ngValue]="''">— Seleccionar —</option>
+                        <option *ngFor="let m of textModels" [ngValue]="m.model_name">{{ asTextLabel(m) }}</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Modelo de Imagen (generación)</label>
+                    <select class="form-select" formControlName="imageModel_for_TextToImage">
+                        <option [ngValue]="''">— Seleccionar —</option>
+                        <option *ngFor="let m of imageModels" [ngValue]="m.model_name">{{ asImageLabel(m) }}</option>
+                    </select>
+                </div>
+            </div>
+        </c-card>
+
+        <!-- IMAGE → VIDEO -->
+        <c-card class="p-4 shadow-sm m-5">
+            <h4 class="mb-2">Image → Video</h4>
+            <p class="text-muted">1) Modelo de <strong>imagen</strong> (si necesitas upscaling/refiner). </p>
+            <p class="text-muted">2) Modelo de <strong>video/realtime</strong> para animación.</p>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Modelo de Video/Realtime</label>
+                    <select class="form-select" formControlName="videoModel_for_ImageToVideo">
+                        <option [ngValue]="''">— Seleccionar —</option>
+                        <option *ngFor="let m of videoModels" [ngValue]="m.model_name">{{ asVideoLabel(m) }}</option>
+                    </select>
+                </div>
+            </div>
+        </c-card>
+
+        <!-- TEXT → SUBTITLE -->
+        <c-card class="p-4 shadow-sm m-5">
+            <h4 class="mb-2">Text → Subtitle</h4>
+            <p class="text-muted">Usa un modelo de <strong>texto</strong> para generar y sincronizar subtítulos desde un
+                guion.</p>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Modelo de Texto</label>
+                    <select class="form-select" formControlName="textModel_for_TextToSubtitle">
+                        <option [ngValue]="''">— Seleccionar —</option>
+                        <option *ngFor="let m of textModels" [ngValue]="m.model_name">{{ asTextLabel(m) }}</option>
+                    </select>
+                </div>
+            </div>
+        </c-card>
+
+        <!-- TEXT → MUSIC -->
+        <c-card class="p-4 shadow-sm m-5">
+            <h4 class="mb-2">Text → Music</h4>
+            <p class="text-muted">1) Modelo de <strong>texto</strong> para guiar el estilo. </p>
+            <p class="text-muted">2) Motor de <strong>audio</strong> (TTS/Music) para generar audio final.</p>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Modelo de Texto</label>
+                    <select class="form-select" formControlName="textModel_for_TextToMusic">
+                        <option [ngValue]="''">— Seleccionar —</option>
+                        <option *ngFor="let m of textModels" [ngValue]="m.model_name">{{ asTextLabel(m) }}</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Modelo de Audio/TTS</label>
+                    <select class="form-select" formControlName="musicModel_for_TextToMusic">
+                        <option [ngValue]="''">— Seleccionar —</option>
+                        <option *ngFor="let m of audioModels" [ngValue]="m.model_name">{{ asAudioLabel(m) }}</option>
+                    </select>
+                </div>
+            </div>
+        </c-card>
+
+        <!-- TEXT → CARRUSEL -->
+        <c-card class="p-4 shadow-sm m-5">
+            <h4 class="mb-2">Idea → Reel Carrusel</h4>
+            <p class="text-muted">1) Modelo de <strong>texto</strong> estructura las diapositivas.</p> 
+            <p class="text-muted">2) Modelo de <strong>imagen</strong> crea los visuales.</p>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Modelo de Texto</label>
+                    <select class="form-select" formControlName="textModel_for_TextToCarrusel">
+                        <option [ngValue]="''">— Seleccionar —</option>
+                        <option *ngFor="let m of textModels" [ngValue]="m.model_name">{{ asTextLabel(m) }}</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Modelo de Imagen</label>
+                    <select class="form-select" formControlName="imageModel_for_TextToCarrusel">
+                        <option [ngValue]="''">— Seleccionar —</option>
+                        <option *ngFor="let m of imageModels" [ngValue]="m.model_name">{{ asImageLabel(m) }}</option>
+                    </select>
+                </div>
+            </div>
+        </c-card>
+
+        <div class="d-flex justify-content-end">
+            <button cButton color="primary" class="px-4" (click)="guardarSettings()">
+                Guardar configuración
+            </button>
+        </div>
+    </form>
+</c-container>

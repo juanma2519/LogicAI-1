@@ -1,0 +1,11 @@
+$text: #e5e7eb;
+
+
+/* ===== Canvas general ===== */
+:host {
+  background:
+    radial-gradient(1200px 600px at 70% -10%, rgba(96,165,250,.12), transparent 60%),
+    radial-gradient(900px 600px at 10% 100%, rgba(59,130,246,.10), transparent 60%),
+    linear-gradient(180deg, #0a0f1a 0%, #0b1220 100%);
+  color: $text;
+}

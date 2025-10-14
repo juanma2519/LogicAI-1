@@ -1,0 +1,144 @@
+<c-container class="mt-4">
+    <c-alert color="danger" *ngIf="error">{{ error }}</c-alert>
+
+    <div class="d-flex align-items-center mb-3">
+        <h4 class="mb-0">ElevenLabs Agents</h4>
+        <button cButton color="primary" class="ms-auto" (click)="openCreate()">
+            <c-icon name="cil-plus" class="me-1"></c-icon> Nuevo agente
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table cTable striped hover responsive class="align-middle">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Voz</th>
+                    <th>LLM</th>
+                    <th>Temp</th>
+                    <th style="width:210px">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let a of agents">
+                    <td class="fw-semibold">{{ a.displayName }}</td>
+                    <td>{{ a.voice_id || '-' }}</td>
+                    <td>{{ a.llm_model || '-' }}</td>
+                    <td>{{ a.temperature ?? '-' }}</td>
+                    <td>
+                        <button cButton color="info" size="sm" class="me-2" (click)="openEdit(a)">
+                            <c-icon name="cil-pencil"></c-icon>
+                        </button>
+                        <button cButton color="secondary" size="sm" class="me-2" (click)="duplicate(a)">
+                            <i class="bi bi-copy"></i>
+                        </button>
+                        <button cButton color="danger" size="sm" class="me-2" (click)="remove(a)">
+                            <c-icon name="cil-trash"></c-icon>
+                        </button>
+                        <button cButton color="success" size="sm" (click)="startSimulate(a)">
+                            <c-icon name="cil-speech"></c-icon>
+                        </button>
+                    </td>
+                </tr>
+                <tr *ngIf="!loading && !agents.length">
+                    <td colspan="5" class="text-center text-muted py-4">Sin agentes</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Simulación -->
+    <c-card class="p-3 shadow-sm mt-4" *ngIf="simAgentId">
+        <h6 class="mb-3">Simulación</h6>
+        <div class="border rounded p-2 mb-2" style="max-height:240px; overflow:auto;">
+            <div *ngFor="let m of simLog" class="mb-2">
+                <span class="badge" [ngClass]="{
+          'bg-primary': m.role==='user',
+        }">{{ m.role }}</span>
+                <span class="ms-2">{{ m.content }}</span>
+            </div>
+        </div>
+        <div class="input-group">
+            <input class="form-control" [(ngModel)]="simUserText" placeholder="Escribe tu mensaje…" />
+            <button cButton color="success" (click)="sendUserMessage()">
+                <c-icon name="cil-send" class="me-1"></c-icon> Enviar
+            </button>
+        </div>
+    </c-card>
+    <!-- Modal Crear/Editar -->
+    <c-modal [visible]="modalOpen" (visibleChange)="modalOpen=$event" size="xl" backdrop="static">
+        <c-modal-header>
+            <h5 class="modal-title">{{ editId ? 'Editar agente' : 'Nuevo agente' }}</h5>
+            <button cButtonClose (click)="modalOpen=false"></button>
+        </c-modal-header>
+
+        <c-modal-body *ngIf="agentActual as a">
+            <app-agent-settings [agent]="agentActual" (saved)="onSaved($event)" (cancelled)="onCancel()">
+            </app-agent-settings>
+        </c-modal-body>
+    </c-modal>
+
+    <!-- ========= MODAL: Selector de voces ========= -->
+    <c-modal [visible]="voicesModal" (visibleChange)="voicesModal=$event" size="lg" backdrop="static">
+        <c-modal-header>
+            <h5 class="modal-title">Seleccionar voz de ElevenLabs</h5>
+            <button cButtonClose (click)="closeVoicesModal()"></button>
+        </c-modal-header>
+
+        <c-modal-body>
+            <!-- búsqueda -->
+            <div class="input-group mb-3">
+                <span class="input-group-text"><c-icon name="cil-search"></c-icon></span>
+                <input class="form-control" [formControl]="voiceSearch"
+                    placeholder="Buscar por nombre, idioma, género, acento, uso..." />
+            </div>
+
+            <div class="border rounded" style="max-height: 420px; overflow:auto;">
+                <ul cListGroup flush>
+                    <button cButton cListGroupItem *ngFor="let v of filteredVoices" (click)="selectVoice(v)"
+                        class="text-start">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold">
+                                    <c-icon name="cil-microphone" class="me-1"></c-icon> {{ v.name }}
+                                </div>
+                                <div class="small text-muted d-flex flex-wrap">
+                                    <span class="meta-cell me-2">
+                                        <c-icon name="cil-tag"></c-icon> {{ v.category || 'custom' }}
+                                    </span>
+
+                                    <span class="meta-cell me-2">
+                                        <c-icon name="cil-user"></c-icon> {{ getGender(v) }}
+                                    </span>
+
+                                    <span class="meta-cell me-2">
+                                        <c-icon name="cil-globe-alt"></c-icon> {{ getLanguage(v) }}
+                                    </span>
+
+                                    <!-- Reservan sitio siempre; se ocultan si no hay dato -->
+                                    <span class="meta-cell me-2" [class.invisible]="!getAccent(v)">
+                                        <c-icon name="cil-bullhorn"></c-icon> {{ getAccent(v) }}
+                                    </span>
+
+                                    <span class="meta-cell me-2" [class.invisible]="!getUseCase(v)">
+                                        <c-icon name="cil-badge"></c-icon> {{ getUseCase(v) }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="ms-2">
+                                <button cButton color="secondary" size="sm" type="button"
+                                    (click)="$event.stopPropagation(); playVoice(v.preview_url)">
+                                    <c-icon name="cil-play-circle"></c-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </button>
+                </ul>
+            </div>
+        </c-modal-body>
+
+        <c-modal-footer>
+            <button cButton color="secondary" (click)="closeVoicesModal()">Cerrar</button>
+        </c-modal-footer>
+    </c-modal>
+</c-container>

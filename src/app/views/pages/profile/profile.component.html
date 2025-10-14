@@ -1,0 +1,134 @@
+<div class="container py-4">
+    <c-card class="shadow-sm">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h4 class="mb-0">Mi Perfil</h4>
+            <div class="d-flex gap-2">
+                <button cButton color="secondary" variant="outline" (click)="loadUser()" [disabled]="saving">
+                    <svg cIcon name="cilReload"></svg> Deshacer cambios
+                </button>
+                <button cButton color="primary" (click)="submit()" [disabled]="saving || form.invalid">
+                    <svg cIcon name="cilSave"></svg>
+                    {{ saving ? 'Guardando…' : 'Guardar cambios' }}
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <form [formGroup]="form" (ngSubmit)="submit()">
+                <div class="row g-3">
+                    <!-- Columna izquierda -->
+                    <div class="col-12 col-lg-8">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nombre *</label>
+                                <input class="form-control" formControlName="nombre" />
+                                <small class="text-danger"
+                                    *ngIf="form.controls['nombre'].touched && form.controls['nombre'].invalid">
+                                    Introduce un nombre válido.
+                                </small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Apellidos *</label>
+                                <input class="form-control" formControlName="apellidos" />
+                                <small class="text-danger"
+                                    *ngIf="form.controls['apellidos'].touched && form.controls['apellidos'].invalid">
+                                    Introduce apellidos válidos.
+                                </small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Correo electrónico</label>
+                                <input class="form-control" formControlName="correo_electronico" readonly/>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">DNI</label>
+                                <input class="form-control" formControlName="dni" maxlength="9" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Fecha de nacimiento</label>
+                                <input class="form-control" type="date" formControlName="fecha_nacimiento" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Género</label>
+                                <select class="form-select" formControlName="genero">
+                                    <option value="">—</option>
+                                    <option value="hombre">Hombre</option>
+                                    <option value="mujer">Mujer</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Teléfono</label>
+                                <input class="form-control" formControlName="telefono" maxlength="20" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Profesión</label>
+                                <input class="form-control" formControlName="profesion" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Imagen (URL)</label>
+                                <input class="form-control" formControlName="image" placeholder="profile2.jpg" />
+                            </div>
+
+                            <!-- Auth opcional -->
+                            <div class="col-md-6">
+                                <label class="form-label">Usuario</label>
+                                <input class="form-control" formControlName="username"/>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Nueva contraseña</label>
+                                <input class="form-control" type="password" formControlName="password"
+                                    placeholder="Dejar en blanco para no cambiar" readonly />
+                                <small class="text-muted">Mínimo 6 caracteres.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Columna derecha -->
+                    <div class="col-12 col-lg-4">
+                        <div class="mb-3 text-center">
+                            <div class="mb-2">
+                                <img [src]="'../../../assets/profilem.png'" alt="Avatar"
+                                    class="rounded-circle shadow-sm"
+                                    style="width: 120px; height: 120px; object-fit: cover;" />
+                            </div>
+                            <small class="text-muted d-block">Vista previa del perfil</small>
+                        </div>
+
+                        <div class="mb-3 text-center">
+                            <label class="form-label d-block">Crédito disponible</label>
+                            <h2>
+                                <span class="badge bg-primary px-4 py-2">
+                                    {{ creditDisplay }} <small class="text-white-50">Cr</small>
+                                </span>
+                            </h2>
+                            <button cButton color="info" class="mt-2" type="button" (click)="recargarCredito()">
+                                <c-icon name="cilCreditCard" class="me-1"></c-icon> Recargar
+                            </button>
+                            <div><small class="text-muted">El crédito no es editable, solo se puede recargar.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones para móviles (duplico por UX; opcional) -->
+                <div class="d-flex gap-2 mt-4 d-lg-none">
+                    <button cButton color="secondary" variant="outline" type="button" (click)="loadUser()"
+                        [disabled]="saving">
+                        <svg cIcon name="cilReload"></svg> Deshacer
+                    </button>
+                    <button cButton color="primary" type="submit" [disabled]="saving || form.invalid">
+                        <svg cIcon name="cilSave"></svg> Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </c-card>
+</div>

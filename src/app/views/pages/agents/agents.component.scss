@@ -1,0 +1,25 @@
+c-modal{
+      display: block;
+    height: 100vh;
+}
+
+:host::before {
+  pointer-events: none; // ✅ el humo no intercepta clicks
+}
+
+:host::ng-deep {
+  .ng-scrollbar {
+    pointer-events: auto; // ✅ solo deja interactuar en el scroll
+  }
+
+  .ng-scroll-content {
+    pointer-events: auto; // ✅ asegura que el contenido no bloquee
+  }
+}
+
+/* Asegúrate que el modal tiene prioridad */
+.modal-backdrop,
+.modal {
+  position: relative;
+  z-index: 2000; // CoreUI modal suele estar en 1050, aquí le damos margen
+}

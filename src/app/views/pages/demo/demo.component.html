@@ -1,0 +1,142 @@
+<app-widgets-demo [pageType]="'home'" />
+
+<c-container class="mt-4">
+    <c-row>
+        <c-col [sm]="6">
+            <!-- 1. Texto a Imagen -->
+            <c-card class="p-4 shadow-lg mb-4" xl="4">
+                <c-row class="g-4 p-4">
+                    <c-col sm="6" xl="6">
+                        <h3 class="mb-3">Text → Image</h3>
+                        <p class="text-muted mb-3">
+                            Escribe una descripción y generaremos una imagen basada en tu idea, usando IA.
+                        </p>
+                    </c-col>
+                    <c-col sm="6" xl="6">
+                        <app-widgets-demo [pageType]="'text-to-image'" />
+                    </c-col>
+                </c-row>
+                <c-row class="g-4 p-4">
+                    <c-input-group class="mb-3" xl="4">
+                        <input cFormControl placeholder="Introducle tu idea..." type="text" [(ngModel)]="textToImage" />
+                        <button cButton class="px-4" color="primary" (click)="sendToN8n('text-to-image', textToImage)">
+                            Create
+                        </button>
+                    </c-input-group>
+                </c-row>
+
+
+            </c-card>
+        </c-col>
+        <c-col [sm]="6">
+            <!-- 2. Imagen a Video -->
+            <c-card class="p-4 shadow-lg mb-4" xl="3">
+                <c-row class="g-4 p-4">
+                    <c-col sm="6" xl="6">
+                        <h3 class="mb-3">Image → Video</h3>
+                        <p class="text-muted mb-3">
+                            Ingresa una URL de imagen o descripción y crearemos un video dinámico a partir de ella.
+                        </p>
+                    </c-col>
+                    <c-col sm="6" xl="6">
+                        <app-widgets-demo [pageType]="'image-to-video'" />
+                    </c-col>
+                </c-row>
+                <c-row class="g-4 p-4">
+                    <c-input-group class="mb-3" xl="4">
+                        <input cFormControl placeholder="Introduce la URL de la imagen o descripción..." type="text"
+                            [(ngModel)]="imageToVideo" />
+                        <button cButton class="px-4" color="primary" (click)="sendToN8n('image-to-video', imageToVideo)">
+                            Create
+                        </button>
+                    </c-input-group>
+                </c-row>
+
+                <c-input-group class="mb-3">
+
+                </c-input-group>
+            </c-card>
+        </c-col>
+        <c-col [sm]="6">
+            <!-- 3. Texto a Subtítulos -->
+            <c-card [ngStyle]="{'minWidth.%': 44}" class="p-4">
+                <c-row class="g-4 p-4">
+                    <c-col sm="6" xl="6">
+                        <h3 class="mb-3">Text → Subtitle</h3>
+                        <p class="text-muted mb-3">
+                            Convierte tu texto en subtítulos sincronizados listos para añadir a un video.
+                        </p>
+                    </c-col>
+                    <c-col sm="6" xl="6">
+                        <app-widgets-demo [pageType]="'text-to-subtitle'" />
+                    </c-col>
+                </c-row>
+                <c-row class="g-4 p-4">
+                    <c-input-group class="mb-3" xl="4">
+                        <input cFormControl placeholder="Texto del video..." type="text"
+                            [(ngModel)]="textToSubtitles" />
+                        <button cButton class="px-4" color="primary"
+                            (click)="sendToN8n('text-to-subtitle', textToSubtitles)">
+                            Create
+                        </button>
+                    </c-input-group>
+                </c-row>
+            </c-card>
+        </c-col>
+        <c-col [sm]="6">
+            <!-- 4. Texto a Música -->
+            <c-card class="p-4 shadow-lg mb-4">
+                <c-row class="g-4 p-4">
+                    <c-col sm="6" xl="6">
+                        <h3 class="mb-3">Text → Music</h3>
+                        <p class="text-muted mb-3">
+                            Describe un estilo o estado de ánimo y generaremos una pista musical única.
+                        </p>
+                    </c-col>
+                    <c-col sm="6" xl="6">
+                        <app-widgets-demo [pageType]="'text-to-music'" />
+                    </c-col>
+                </c-row>
+                <c-row class="g-4 p-4">
+                    <c-input-group class="mb-3">
+                        <input cFormControl placeholder="Describe el estilo musical..." type="text"
+                            [(ngModel)]="textToMusic" />
+                        <button cButton class="px-4" color="primary" (click)="sendToN8n('text-to-music', textToMusic)">
+                            Create
+                        </button>
+                    </c-input-group>
+                </c-row>
+            </c-card>
+        </c-col>
+        <c-col [sm]="6">
+            <!-- 5. Reel de Carrusel -->
+            <c-card class="p-4 shadow-lg mb-4">
+                <c-row class="g-4 p-4">
+                    <c-col sm="6" xl="6">
+                        <h3 class="mb-3">Idea → Reel Carrusel</h3>
+                        <p class="text-muted mb-3">
+                            Escribe una idea y generaremos un carrusel estilo reel para redes sociales.
+                        </p>
+                    </c-col>
+                    <c-col sm="6" xl="6">
+                        <app-widgets-demo [pageType]="'text-to-carrusel'" />
+                    </c-col>
+                </c-row>
+                <c-row class="g-4 p-4">
+                    <c-input-group class="mb-3">
+                        <input cFormControl placeholder="Escribe tu idea..." type="text" [(ngModel)]="carouselIdea" />
+                        <button cButton class="px-4" color="primary" (click)="sendToN8n('text-to-carrusel', carouselIdea)">
+                            Crear
+                        </button>
+                    </c-input-group>
+                </c-row>
+            </c-card>
+        </c-col>
+    </c-row>
+    <!-- Resultado general -->
+    <img *ngIf="blobUrl" [src]="blobUrl" alt="Respuesta" />
+    <div *ngIf="response">
+        <h5>Respuesta de n8n:</h5>
+        <pre>{{ response }}</pre>
+    </div>
+</c-container>

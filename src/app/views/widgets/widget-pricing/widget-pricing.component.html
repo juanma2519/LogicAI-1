@@ -1,0 +1,53 @@
+<c-card class="p-3 shadow-sm">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <h5 class="mb-0">Pricing overview</h5>
+
+        <div class="ms-auto d-flex flex-wrap gap-2">
+            <div class="input-group input-group-sm" *ngIf="mode === 'byModel'">
+                <span class="input-group-text">Familia</span>
+                <select class="form-select" [(ngModel)]="selectedFamily" (change)="onFamilyChange()">
+                    <option value="all">Todas</option>
+                    <option *ngFor="let f of families" [value]="f">{{ f }}</option>
+                </select>
+            </div>
+
+            <div class="input-group input-group-sm">
+                <span class="input-group-text">Vista</span>
+                <select class="form-select" [(ngModel)]="mode" (change)="onModeChange(mode)">
+                    <option value="byFamily">Por familia (media)</option>
+                    <option value="byModel">Por modelo</option>
+                </select>
+            </div>
+
+            <div class="input-group input-group-sm" *ngIf="mode === 'byModel'">
+                <span class="input-group-text">Métrica</span>
+                <select class="form-select" [(ngModel)]="metric" (change)="onMetricChange(metric)">
+                    <option value="input">Input</option>
+                    <option value="output">Output</option>
+                </select>
+            </div>
+
+            <div class="input-group input-group-sm" *ngIf="mode === 'byModel'">
+                <span class="input-group-text">Top</span>
+                <select class="form-select" [(ngModel)]="topN" (change)="onTopNChange()">
+                    <option *ngFor="let n of [5,10,15,20]" [value]="n">{{ n }}</option>
+                </select>
+            </div>
+
+            <button cButton color="secondary" variant="outline" size="sm" (click)="load()">
+                <c-icon name="cil-reload" class="me-1"></c-icon> Recargar
+            </button>
+        </div>
+    </div>
+
+    <c-alert color="danger" *ngIf="error">{{ error }}</c-alert>
+
+    <c-chart *ngIf="!loading" [type]="'bar'" [data]="data" [options]="options" height="120">
+    </c-chart>
+
+    <div class="text-muted small mt-2" *ngIf="!loading">
+        * En “Por modelo” se muestran los <strong>Top {{ topN }}</strong> más baratos según la métrica seleccionada.
+    </div>
+
+    <div *ngIf="loading" class="text-center py-4">Cargando…</div>
+</c-card>

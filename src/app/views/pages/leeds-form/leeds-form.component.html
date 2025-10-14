@@ -1,0 +1,162 @@
+<c-modal [visible]="visible" (close)="onClose()" alignment="center" backdrop="static">
+  <c-modal-header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </c-modal-header>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" cForm>
+    <c-modal-body>
+
+      <!-- Fecha de entrada -->
+      <div class="mb-3 d-flex align-items-center">
+        <label cLabel for="fecha_de_entrada" style="width: 20%; margin-right: 5%;">Fecha entrada</label>
+        <input
+          cFormControl
+          type="date"
+          id="fecha_de_entrada"
+          formControlName="fecha_de_entrada"
+          style="width: 75%;"
+        />
+      </div>
+
+      <!-- Empresa -->
+      <div class="mb-3 d-flex align-items-center">
+        <label cLabel for="empresa" style="width: 20%; margin-right: 5%;">Empresa</label>
+        <input
+          cFormControl
+          id="empresa"
+          formControlName="empresa"
+          placeholder="Nombre de la empresa"
+          style="width: 75%;"
+        />
+      </div>
+
+      <!-- Nombre -->
+      <div class="mb-3 d-flex align-items-center">
+        <label cLabel for="nombre" style="width: 20%; margin-right: 5%;">Nombre</label>
+        <input
+          cFormControl
+          id="nombre"
+          formControlName="nombre"
+          placeholder="Introduce el nombre del contacto"
+          style="width: 75%;"
+        />
+      </div>
+
+      <!-- Web -->
+      <div class="mb-3 d-flex align-items-center">
+        <label cLabel for="web" style="width: 20%; margin-right: 5%;">Web</label>
+        <input
+          cFormControl
+          id="web"
+          formControlName="web"
+          placeholder="https://ejemplo.com"
+          style="width: 75%;"
+        />
+      </div>
+
+      <!-- Correo -->
+      <div class="mb-3 d-flex align-items-center">
+        <label cLabel for="correo" style="width: 20%; margin-right: 5%;">Correo</label>
+        <input
+          cFormControl
+          type="email"
+          id="correo"
+          formControlName="correo"
+          placeholder="ejemplo@correo.com"
+          style="width: 75%;"
+        />
+      </div>
+
+      <!-- Teléfono -->
+      <div class="mb-3 d-flex align-items-center">
+        <label cLabel for="telefono" style="width: 20%; margin-right: 5%;">Teléfono</label>
+        <input
+          cFormControl
+          id="telefono"
+          formControlName="telefono"
+          placeholder="Número de contacto"
+          style="width: 75%;"
+        />
+      </div>
+
+      <!-- Fuente -->
+      <div class="mb-3 d-flex align-items-center">
+        <label cLabel for="fuente" style="width: 20%; margin-right: 5%;">Fuente</label>
+        <input
+          cFormControl
+          id="fuente"
+          formControlName="fuente"
+          placeholder="Fuente del lead (Google, formulario, etc.)"
+          style="width: 75%;"
+        />
+      </div>
+
+      <!-- Propietario/Relación -->
+      <div class="mb-3 d-flex align-items-center">
+        <label cLabel for="propietario_relaccion" style="width: 20%; margin-right: 5%;">Propietario</label>
+        <input
+          cFormControl
+          id="propietario_relaccion"
+          formControlName="propietario_relaccion"
+          placeholder="Nombre del responsable o relación"
+          style="width: 75%;"
+        />
+      </div>
+
+      <!-- Notas -->
+      <div class="mb-3 d-flex align-items-start">
+        <label cLabel for="notas" style="width: 20%; margin-right: 5%;">Notas</label>
+        <textarea
+          cFormControl
+          id="notas"
+          formControlName="notas"
+          placeholder="Notas o comentarios adicionales"
+          rows="3"
+          style="width: 75%;"
+        ></textarea>
+      </div>
+
+      <!-- Concepto -->
+      <div class="mb-3 d-flex align-items-center">
+        <label cLabel for="concepto_id" style="width: 20%; margin-right: 5%;">Concepto</label>
+        <select cSelect id="concepto_id" formControlName="concepto_id" style="width: 75%;">
+          <option [ngValue]="null">Selecciona un concepto</option>
+          <option *ngFor="let c of conceptos" [ngValue]="c.id">{{ c.nombre }}</option>
+        </select>
+      </div>
+
+      <!-- Estado -->
+      <div class="mb-3 d-flex align-items-center">
+        <label cLabel for="estado_id" style="width: 20%; margin-right: 5%;">Estado</label>
+        <select cSelect id="estado_id" formControlName="estado_id" style="width: 75%;">
+          <option [ngValue]="null">Selecciona un estado</option>
+          <option *ngFor="let e of estados" [ngValue]="e.id">{{ e.nombre }}</option>
+        </select>
+      </div>
+
+      <!-- Vista detalle: muestra badges -->
+      <div *ngIf="detail" class="mt-3">
+        <span class="badge text-bg-light border me-2">
+          {{ (conceptos | keyvalueToName: form.value.concepto_id) || '—' }}
+        </span>
+        <span
+          class="badge"
+          [ngClass]="{
+            'text-bg-success': (estados | keyvalueToName: form.value.estado_id) === 'Cerrado',
+            'text-bg-danger': (estados | keyvalueToName: form.value.estado_id) === 'Perdido',
+            'text-bg-warning': ((estados | keyvalueToName: form.value.estado_id) || '').startsWith('Pendiente'),
+            'text-bg-secondary': !(estados | keyvalueToName: form.value.estado_id)
+          }"
+        >
+          {{ (estados | keyvalueToName: form.value.estado_id) || '—' }}
+        </span>
+      </div>
+
+    </c-modal-body>
+
+    <c-modal-footer>
+      <button type="button" cButton color="secondary" (click)="onClose()">Cancelar</button>
+      <button type="submit" cButton color="primary" [disabled]="form.invalid" *ngIf="!detail">Guardar</button>
+    </c-modal-footer>
+  </form>
+</c-modal>
