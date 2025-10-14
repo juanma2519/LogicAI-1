@@ -1,4 +1,8 @@
+<img [src]="'../../../assets/leads.png'" alt="Avatar" style="width:100%;
+    background-size: cover;" />
+
 <app-widgets-demo [pageType]="'home'" />
+
 <!-- Ajuste: el formulario ahora recibe listas de conceptos/estados y trabaja con IDs -->
 <app-lead-form [lead]="leadSeleccionado" [visible]="formVisible" [detail]="detail" [conceptos]="conceptos"
     [estados]="estados" (save)="guardarLead($event)" (close)="formVisible = false; leadFlag = false;">
