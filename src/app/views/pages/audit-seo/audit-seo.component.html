@@ -67,17 +67,15 @@
       </thead>
 
       <tbody>
-        <tr *ngFor="let s of scrapsFiltrados; let i = index">
+        <tr *ngFor="let s of pagedLeads; let i = index">
           <th scope="row">{{ s.id }}</th>
 
           <td>
             <span class="badge bg-primary-subtle text-dark border text-truncate d-inline-block" style="max-width:320px">
-              <a [href]="s.url"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="badge bg-primary-subtle text-dark text-truncate d-inline-block"
-                                style="max-width:320px; text-decoration:none; cursor:pointer;">
-                                {{ s.url }}
+              <a [href]="s.url" target="_blank" rel="noopener noreferrer"
+                class="badge bg-primary-subtle text-dark text-truncate d-inline-block"
+                style="max-width:320px; text-decoration:none; cursor:pointer;">
+                {{ s.url }}
               </a>
             </span>
           </td>
@@ -110,13 +108,13 @@
             <button cButton color="primary" *ngIf="s.status === 'error' || s.status === 'completado'" size="sm"
               [cPopover]="'Ver detalle (Recuerda que el Scrap debe estar en estado Completado)'"
               [cPopoverTrigger]="'hover'" [cPopoverPlacement]="'top'" (click)="verDetalle(s)" class="me-2">
-              <c-icon name="cil-magnifying-glass"></c-icon>
+              <i class="bi bi-eye-fill"></i>
             </button>
 
             <button cButton color="secondary" size="sm" [cPopover]="'Reintentar scraping'" [cPopoverTrigger]="'hover'"
               [cPopoverPlacement]="'top'" (click)="reintentar(s)"
               *ngIf="s.status === 'error' || s.status === 'completado'">
-              <svg cIcon name="cilReload" size="lg" style="cursor: pointer;"></svg>
+              <i class="bi bi-arrow-clockwise"></i>
             </button>
 
           </td>
@@ -163,100 +161,105 @@
     <button cButtonClose (click)="detailVisible=false"></button>
   </c-modal-header>
   <!-- Lead asociado -->
-<ng-container *ngIf="lead as L">
-  <c-card class="mb-3 shadow-sm border-0">
-    <c-card-header class="m-4">
-      <strong>Lead asociado: </strong> {{ L.nombre || 'Sin datos' }}
-      <c-badge *ngIf="L.id" color="secondary" class="ms-2">ID: {{ L.id }}</c-badge>
-    </c-card-header>
+  <ng-container *ngIf="lead as L">
+    <c-card class="mb-3 shadow-sm border-0">
+      <c-card-header class="m-4">
+        <strong>Lead asociado: </strong> {{ L.nombre || 'Sin datos' }}
+        <c-badge *ngIf="L.id" color="secondary" class="ms-2">ID: {{ L.id }}</c-badge>
+      </c-card-header>
 
-    <c-card-body class="shadow p-2 mb-0 m-4">
-      <div class="row g-3 align-items-center">
+      <c-card-body class="shadow p-2 mb-0 m-4">
+        <div class="row g-3 align-items-center">
 
-        <div class="shadow p-2 col-12 col-md-4 border rounded p-2 m-2">
-          <div class="text-muted small">Fecha de entrada</div>
-          <!-- OJO: en tu interfaz es 'fecha_entrada' -->
-          <div class="fw-semibold">
-            {{ L.fecha_entrada | date:'yyyy-MM-dd' }}
+          <div class="shadow p-2 col-12 col-md-4 border rounded p-2 m-2">
+            <div class="text-muted small">Fecha de entrada</div>
+            <!-- OJO: en tu interfaz es 'fecha_entrada' -->
+            <div class="fw-semibold">
+              {{ L.fecha_entrada | date:'yyyy-MM-dd' }}
+            </div>
           </div>
-        </div>
 
-        <div class="shadow p-2 col-12 col-md-4 border rounded p-2 m-2">
-          <div class="text-muted small">Nombre</div>
-          <div class="text-truncate">{{ L.nombre || 'Sin datos' }}</div>
-        </div>
+          <div class="shadow p-2 col-12 col-md-4 border rounded p-2 m-2">
+            <div class="text-muted small">Nombre</div>
+            <div class="text-truncate">{{ L.nombre || 'Sin datos' }}</div>
+          </div>
 
-        <div class="shadow p-2 col-12 col-md-6 border rounded p-2 m-2">
-          <div class="text-muted small">Web</div>
-          <a *ngIf="L.web" [href]="L.web" target="_blank" rel="noopener"
-             class="badge bg-warning text-dark border text-truncate d-inline-block" style="max-width:100%">
-            {{ L.web }}
-          </a>
-          <span *ngIf="!L.web" class="text-muted">Sin datos</span>
-        </div>
+          <div class="shadow p-2 col-12 col-md-6 border rounded p-2 m-2">
+            <div class="text-muted small">Web</div>
+            <a *ngIf="L.web" [href]="L.web" target="_blank" rel="noopener"
+              class="badge bg-warning text-dark border text-truncate d-inline-block" style="max-width:100%">
+              {{ L.web }}
+            </a>
+            <span *ngIf="!L.web" class="text-muted">Sin datos</span>
+          </div>
 
-        <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2">
-          <div class="text-muted small">Teléfono</div>
-          <div class="text-truncate">{{ L.telefono || 'Sin datos' }}</div>
-        </div>
+          <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2">
+            <div class="text-muted small">Teléfono</div>
+            <div class="text-truncate">{{ L.telefono || 'Sin datos' }}</div>
+          </div>
 
-        <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2">
-          <div class="text-muted small">Correo</div>
-          <div class="text-truncate">{{ L.correo || 'Sin datos' }}</div>
-        </div>
+          <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2">
+            <div class="text-muted small">Correo</div>
+            <div class="text-truncate">{{ L.correo || 'Sin datos' }}</div>
+          </div>
 
-        <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2">
-          <div class="text-muted small">Ciudad</div>
-          <div class="text-truncate">{{ L.ciudad || 'Sin datos' }}</div>
-        </div>
+          <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2">
+            <div class="text-muted small">Ciudad</div>
+            <div class="text-truncate">{{ L.ciudad || 'Sin datos' }}</div>
+          </div>
 
-        <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2">
-          <div class="text-muted small">Negocio</div>
-          <div class="text-truncate">{{ L.negocio || 'Sin datos' }}</div>
-        </div>
+          <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2">
+            <div class="text-muted small">Negocio</div>
+            <div class="text-truncate">{{ L.negocio || 'Sin datos' }}</div>
+          </div>
 
-        <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2" >
-          <div class="text-muted small">Concepto</div>
-          <span class="badge text-bg-light border">
-            {{
+          <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2">
+            <div class="text-muted small">Concepto</div>
+            <span class="badge text-bg-light border">
+              {{
               L.concepto?.nombre
               || L.concepto_nombre
               || (getConceptoNombre?.(L.concepto_id) || 'Sin datos')
-            }}
-          </span>
-        </div>
+              }}
+            </span>
+          </div>
 
-        <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2">
-          <div class="text-muted small">Estado</div>
-          <span class="badge"
-                [ngClass]="{
+          <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2">
+            <div class="text-muted small">Estado</div>
+            <span class="badge" [ngClass]="{
                   'text-bg-success': ((L.estado?.nombre || L.estado_nombre) || '').toLowerCase() === 'cerrado',
                   'text-bg-danger':  ((L.estado?.nombre || L.estado_nombre) || '').toLowerCase() === 'perdido',
                   'text-bg-warning': ((L.estado?.nombre || L.estado_nombre) || '').startsWith('Pendiente'),
                   'text-bg-secondary': !(L.estado?.nombre || L.estado_nombre)
                 }">
-            {{
+              {{
               L.estado?.nombre
               || L.estado_nombre
               || (getEstadoNombre?.(L.estado_id) || 'Sin datos')
-            }}
-          </span>
-        </div>
+              }}
+            </span>
+          </div>
 
-        <div class="shadow p-2 col-12 border rounded p-2 m-2">
-          <div class="text-muted small">Propietario</div>
-          <div class="text-truncate">{{ L.propietario_relaccion || 'Sin datos' }}</div>
-        </div>
+          <div class="shadow p-2 col-12 border rounded p-2 m-2">
+            <div class="text-muted small">Propietario</div>
+            <div class="text-truncate">{{ L.propietario_relaccion || 'Sin datos' }}</div>
+          </div>
 
-        <div class="shadow p-2 col-12 border rounded p-2 m-2">
-          <div class="text-muted small">Notas</div>
-          <div class="text-break">{{ L.notas || 'Sin datos' }}</div>
-        </div>
+          <div class="shadow p-2 col-12 border rounded p-2 m-2">
+            <div class="text-muted small">Notas</div>
+            <div class="text-break">{{ L.notas || 'Sin datos' }}</div>
+          </div>
 
-      </div>
-    </c-card-body>
-  </c-card>
-</ng-container>
+        </div>
+        <button class="m-2" cButton color="success" size="sm" [disabled]="!lead.telefono" (click)="abrirModalWhatsapp()">
+          <i class="bi bi-whatsapp"></i> Whatsapp Marketing
+        </button>
+        <button class="m-2" cButton color="success" size="sm" [disabled]="!lead.correo" (click)="abrirModalWhatsapp()">
+          <i class="bi bi-envelope-arrow-up-fill"></i> Email Marketing
+        </button>
+      </c-card-body>
+    </c-card>
+  </ng-container>
   <c-modal-body>
     <!-- KPIs principales -->
     <div class="row g-3 mt-1 m-4" *ngIf="data">
@@ -566,7 +569,7 @@
         <c-card class="shadow-sm border-0 h-100">
           <c-card-header><strong>Quick Wins</strong></c-card-header>
           <c-card-body>
-                        <div class="vstack gap-3">
+            <div class="vstack gap-3">
               <div *ngFor="let r of quickWins">
                 <strong>{{ r.titulo }}</strong>
                 <div class="small text-muted">{{ r.accion }}</div>
@@ -618,4 +621,25 @@
     </c-card>
   </c-modal-body>
 
+</c-modal>
+<c-modal [visible]="waVisible" (close)="waVisible=false" backdrop="static" alignment="center" size="lg">
+  <c-modal-header>
+    <h5 class="modal-title">Enviar por WhatsApp</h5>
+    <button cButtonClose (click)="waVisible=false"></button>
+  </c-modal-header>
+  <c-modal-body>
+    <div class="m-3">
+      <label cLabel class="m-3">Destino (E.164)</label>
+      <input class="m-3" cFormControl type="tel" [(ngModel)]="waTo" placeholder="+34600111222">
+    </div>
+    <div class="m-3">
+      <label class="m-3" cLabel>Mensaje</label>
+      <textarea class="m-3" cFormControl rows="10" style="width: 80%; vertical-align: top;" [(ngModel)]="waText"></textarea>
+    </div>
+    <div class="text-muted small">Se usará tu webhook de n8n configurado en Perfil.</div>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" (click)="waVisible=false">Cancelar</button>
+    <button cButton color="success" [disabled]="waTo == ''" (click)="enviarWhatsApp(lead)">Enviar</button>
+  </c-modal-footer>
 </c-modal>

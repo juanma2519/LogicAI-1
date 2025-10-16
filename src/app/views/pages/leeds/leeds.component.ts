@@ -237,12 +237,7 @@ export class LeadsComponent implements OnInit {
     get pages(): number[] {
         return Array.from({ length: this.totalPages }, (_, i) => i + 1);
     }
-    mostrarDesde() {
-        return this.totalItems === 0 ? 0 : (this.page - 1) * this.pageSize + 1;
-    }
-    mostrarHasta() {
-        return Math.min(this.page * this.pageSize, this.totalItems);
-    }
+
 
     // si ya tienes leadsFiltrados, úsalo tal cual; aquí solo derivamos el “slice”
     get baseList(): any[] {

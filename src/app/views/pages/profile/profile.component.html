@@ -39,7 +39,7 @@
 
                             <div class="col-md-6">
                                 <label class="form-label">Correo electrónico</label>
-                                <input class="form-control" formControlName="correo_electronico" readonly/>
+                                <input class="form-control" formControlName="correo_electronico" readonly />
                             </div>
 
                             <div class="col-md-6">
@@ -79,7 +79,7 @@
                             <!-- Auth opcional -->
                             <div class="col-md-6">
                                 <label class="form-label">Usuario</label>
-                                <input class="form-control" formControlName="username"/>
+                                <input class="form-control" formControlName="username" />
                             </div>
 
                             <div class="col-md-6">
@@ -129,6 +129,70 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </c-card>
+    <c-card class="shadow-sm mt-4">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="mb-0"><i class="bi bi-whatsapp"></i> WhatsApp (configuración)</h5>
+            <c-badge [color]=" whatsappForm?.get('enabled')?.value ? 'success' : 'secondary'">
+                {{ whatsappForm?.get('enabled')?.value ? 'Habilitado' : 'Deshabilitado' }}
+            </c-badge>
+        </div>
+
+        <div class="card-body">
+            <div [formGroup]="whatsappForm" class="row g-2">
+                <div class="col-12 m-2">
+                    <c-form-check>
+                        <input cFormCheckInput type="checkbox" id="wa-enabled" formControlName="enabled">
+                        <label cFormCheckLabel for="wa-enabled">Activar envío por WhatsApp</label>
+                    </c-form-check>
+                </div>
+
+                <div class="col-md-6 m-2">
+                    <label class="form-label">WABA ID (WhatsApp Business Account ID) </label>
+                    <input class="form-control" formControlName="waba_id" placeholder="1234567890" />
+                </div>
+
+                <div class="col-md-6 m-2">
+                    <label class="form-label">Phone Number ID</label>
+                    <input class="form-control" formControlName="phone_number_id" placeholder="123456789012345" />
+                </div>
+
+                <div class="col-md-8 m-2">
+                    <label class="form-label">Access Token</label>
+                    <div class="input-group">
+                        <input class="form-control" [type]="showToken ? 'text' : 'password'"
+                            formControlName="access_token" placeholder="EAAB...">
+                        <button cButton type="button" color="secondary" variant="outline"
+                            (click)="showToken = !showToken">
+                            {{ showToken ? 'Ocultar' : 'Mostrar' }}
+                        </button>
+                    </div>
+                    <small class="text-muted">Guárdalo de forma segura. Puedes pegar aquí el token largo de
+                        Meta.</small>
+                </div>
+
+                <div class="col-md-4 m-2">
+                    <label class="form-label">Teléfono por defecto (pruebas)</label>
+                    <input class="form-control" formControlName="default_recipient" placeholder="+34600111222"
+                        [class.is-invalid]="whatsappForm.touched && whatsappForm.invalid">
+                    <small class="text-danger" *ngIf="whatsappForm.touched && whatsappForm.invalid">
+                        Formato recomendado: +346XXXXXXXX
+                    </small>
+                </div>
+
+                <div class="col-12 d-flex gap-2 m-4">
+                    <button cButton color="success" type="button" (click)="updateWhatsapp()"
+                        [disabled]="saving || whatsappForm.invalid">
+                        <c-icon name="cilSend" class="me-1" ></c-icon> Guardar
+                    </button>
+                    <button cButton color="info" type="button" (click)="testWhatsapp()"
+                        [disabled]="saving || whatsappForm.invalid">
+                        <c-icon name="cilSend" class="me-1"></c-icon> Enviar prueba
+                    </button>
+                    <small class="text-muted mt-2">Se enviará un mensaje de prueba al “Teléfono por defecto”.</small>
+                </div>
+            </div>
         </div>
     </c-card>
 </div>

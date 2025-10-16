@@ -197,17 +197,17 @@
             <td class="d-flex" style="padding: 5px 20px;">
                 <button cButton color="primary" size="sm" [cPopover]="'Ver Detalle'" class="me-1 mb-1" [cPopoverTrigger]="'hover'"
                     [cPopoverPlacement]="'top'" (click)="verDetalle(lead)" class="me-2">
-                    <c-icon name="cil-comment-square"></c-icon>
+                    <i class="bi bi-eye-fill"></i>
                 </button>
 
                 <button cButton color="info" size="sm" [cPopover]="'Editar Lead'" class="me-1 mb-1" [cPopoverTrigger]="'hover'"
                     class="me-2" [cPopoverPlacement]="'top'" (click)="editarLead(lead)">
-                    <c-icon name="cil-pencil"></c-icon>
+                    <i class="bi bi-pencil-fill"></i>
                 </button>
 
                 <button cButton *ngIf="lead.web" color="info" size="sm" [disabled]="scraping" [cPopover]="'Scrap web'" class="me-1 mb-1" [cPopoverTrigger]="'hover'"
                     class="me-2" [cPopoverPlacement]="'top'" (click)="scrapWeb(lead)">
-                    <c-icon name="cil-pencil"></c-icon>
+                    <i class="bi bi-bug"></i>
                 </button>
 
                 <button cButton color="danger" size="sm" [cPopover]="'Eliminar Lead'" class="me-1 mb-1" [cPopoverTrigger]="'hover'"

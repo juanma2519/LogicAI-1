@@ -16,6 +16,7 @@ import { LeadFormComponent } from '../leeds-form/leeds-form.component';
 import { AgentSettingsComponent } from '../agent-settings/agent-settings.component';
 import { LeedsService } from '../../../services/leads.service';
 import { Concepto, Estado, Lead } from '../../../models/lead';
+import { WhatsAppService } from '../../../services/whatsapp.service';
 
 type ChartData = {
   labels: string[];
@@ -69,6 +70,9 @@ type ChartData = {
 export class AuditSeoComponent implements OnInit, OnDestroy {
 
   scraps: SeoAuditItem[] = [];
+  waVisible = false;
+  waTo = '';
+  waText = '';
   lead: Lead = {
     usuario_id: 0,
     fecha_entrada: ''
@@ -139,12 +143,15 @@ export class AuditSeoComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private webhokService: N8nService,
-    private leadService: LeedsService
+    private leadService: LeedsService,
+    private wa: WhatsAppService
   ) { }
 
   ngOnInit(): void {
-    this.form = this.fb.group({ url: ['', [Validators.required,
-      Validators.pattern(/^(https?:\/\/)([\w\-]+\.)+[\w\-]+(\/[^\s]*)?$/i)]] });
+    this.form = this.fb.group({
+      url: ['', [Validators.required,
+      Validators.pattern(/^(https?:\/\/)([\w\-]+\.)+[\w\-]+(\/[^\s]*)?$/i)]]
+    });
     this.cargarScraps();
   }
   ngOnDestroy(): void {
@@ -322,12 +329,6 @@ export class AuditSeoComponent implements OnInit, OnDestroy {
   get pages(): number[] {
     return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
-  mostrarDesde() {
-    return this.totalItems === 0 ? 0 : (this.page - 1) * this.pageSize + 1;
-  }
-  mostrarHasta() {
-    return Math.min(this.page * this.pageSize, this.totalItems);
-  }
 
   // si ya tienes leadsFiltrados, úsalo tal cual; aquí solo derivamos el “slice”
   get baseList(): any[] {
@@ -414,4 +415,51 @@ export class AuditSeoComponent implements OnInit, OnDestroy {
   // Formateos para plantilla
   ms(n?: number | null) { return n ?? 0; }
   toSec(n?: number | null) { return ((n ?? 0) / 1000).toFixed(2); }
+
+  abrirModalWhatsapp() {
+    // propone un texto por defecto (igual que en backend)
+    const r = this.scrapSelected?.payload_json.summary;
+    const ls = r?.lighthouse_scores || {};
+    const tot = r?.totales || {};
+    this.waTo = this.lead.telefono?.toString() || "";
+    this.waText =
+      `✅ Auditoría SEO lista
+• URL: ${this.scrapSelected?.url}
+• Estrategia: ${this.scrapSelected?.estrategia}
+• Performance: ${Math.round((r?.lighthouse_scores.performance ?? 0) * 100)}%
+• SEO: ${Math.round((r?.lighthouse_scores.seo ?? 0) * 100)}%
+• Errores: ${r?.totales.errores ?? 0} · Warnings: ${r?.totales.warnings ?? 0} · Oportunidades: ${r?.totales.oportunidades ?? 0}
+
+Si necesitas el informe detallado, responde a este mensaje.`;
+    this.waVisible = true;
+  }
+
+  enviarWhatsApp(lead: any) {
+    // Si no pasas "to", el backend usará default_recipient guardado en credenciales
+    const payload = {
+      usuario_id: this.userId,
+      to: lead?.telefono ? this.normalizaTelefono(lead.telefono) : undefined,
+      message: `Hola ${lead?.empresa || lead?.nombre || ''}, hemos realizado tu auditoría SEO.`,
+      lead_id: lead?.id,
+      consultoria_id: this.scrapSelected?.id // si aplica
+      // passCredentials: true // solo si tu n8n lo necesita
+    };
+
+    this.wa.sendTest(payload).subscribe({
+      next: (res) => {
+
+        // toast de enviado OK
+      },
+      error: (err) => {
+
+        // toast de error
+      }
+    });
+  }
+
+  normalizaTelefono(raw: string): string {
+    // quita espacios, guiones, etc. y asegúrate de que incluya prefijo internacional si lo requiere tu n8n/meta (+34...)
+    return (raw || '').replace(/\s|-/g, '');
+  }
+
 }
