@@ -431,11 +431,9 @@ export class LeadsComponent implements OnInit {
     const url = (lead.web as string).trim();
     if (!url) return;
     
-    this.webhokService.puppeter(url, this.userId, lead.id || 0)
-      .pipe(
-        catchError(err => {
-          return of(null);
-        })
-      );
+    this.webhokService.puppeter(url, this.userId, lead.id || 0).subscribe((updated) => {
+                // sustituye en memoria
+
+    });
   }
 }
