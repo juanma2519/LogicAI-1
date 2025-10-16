@@ -3,7 +3,7 @@ export interface Estado   { id: number; nombre: string; activo?: boolean; }
 export interface Lead {
   id?: number;
   usuario_id: number;
-  fecha_de_entrada: string;
+  fecha_entrada: Date | string;
   empresa?: string | null;
   nombre?: string | null;
   web?: string | null;

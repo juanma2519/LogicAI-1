@@ -42,7 +42,7 @@ export class LeadFormComponent implements OnInit, OnChanges {
     this.form = this.fb.group({
       id: [null],
       usuario_id: [null],
-      fecha_de_entrada: '',
+      fecha_entrada: '',
       empresa: '',
       nombre: '',
       web: '',
@@ -78,7 +78,7 @@ export class LeadFormComponent implements OnInit, OnChanges {
       this.form.reset({
         id: [null],
         usuario_id: [null],
-        fecha_de_entrada: '',
+        fecha_entrada: '',
         empresa: '',
         nombre: '',
         web: '',
@@ -111,7 +111,7 @@ export class LeadFormComponent implements OnInit, OnChanges {
     this.form.patchValue({
       id: lead.id ?? null,
       usuario_id: lead.usuario_id ?? null,
-      fecha_de_entrada: lead.fecha_de_entrada ?? '',
+      fecha_entrada: lead.fecha_entrada ?? '',
       empresa: lead.empresa ?? '',
       nombre: lead.nombre ?? '',
       web: lead.web ?? '',
@@ -133,7 +133,7 @@ export class LeadFormComponent implements OnInit, OnChanges {
     this.save.emit({
       id: value.id ?? undefined,
       usuario_id: value.usuario_id ?? undefined,
-      fecha_de_entrada: value.fecha_de_entrada ?? undefined,
+      fecha_entrada: value.fecha_entrada ?? undefined,
       empresa: value.empresa ?? undefined,
       nombre: value.nombre,
       web: value.web ?? undefined,

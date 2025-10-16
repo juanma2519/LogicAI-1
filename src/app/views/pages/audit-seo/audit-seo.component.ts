@@ -14,6 +14,8 @@ import { WidgetsDropdownComponent } from '../../widgets/widgets-dropdown/widgets
 import { DataResponse, SeoAuditEstado, SeoAuditItem } from '../../../models/dataResponse';
 import { LeadFormComponent } from '../leeds-form/leeds-form.component';
 import { AgentSettingsComponent } from '../agent-settings/agent-settings.component';
+import { LeedsService } from '../../../services/leads.service';
+import { Concepto, Estado, Lead } from '../../../models/lead';
 
 type ChartData = {
   labels: string[];
@@ -60,16 +62,22 @@ type ChartData = {
     TemplateIdDirective,
     AccordionButtonDirective,
     AgentSettingsComponent,
-        GridModule, CardModule, ButtonModule, AlertModule,
+    GridModule, CardModule, ButtonModule, AlertModule,
     PaginationModule, ContainerComponent, FormsModule, CardGroupComponent, FormDirective,
     ModalModule, InputGroupComponent, LeadFormComponent, PopoverModule, PopoverDirective, IconModule, TableModule, UtilitiesModule, InputGroupTextDirective, IconDirective]
 })
 export class AuditSeoComponent implements OnInit, OnDestroy {
 
   scraps: SeoAuditItem[] = [];
+  lead: Lead = {
+    usuario_id: 0,
+    fecha_entrada: ''
+  };
   scrapsFiltrados: SeoAuditItem[] = [];
   scrapSelected: SeoAuditItem | null = null;
   detailVisible: boolean = false;
+  conceptos: Concepto[] = [];
+  estados: Estado[] = [];
   form!: FormGroup;
   loading = false;
   progress = 0;
@@ -131,10 +139,12 @@ export class AuditSeoComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private webhokService: N8nService,
+    private leadService: LeedsService
   ) { }
 
   ngOnInit(): void {
-    this.form = this.fb.group({ url: ['', [Validators.required]] });
+    this.form = this.fb.group({ url: ['', [Validators.required,
+      Validators.pattern(/^(https?:\/\/)([\w\-]+\.)+[\w\-]+(\/[^\s]*)?$/i)]] });
     this.cargarScraps();
   }
   ngOnDestroy(): void {
@@ -149,14 +159,33 @@ export class AuditSeoComponent implements OnInit, OnDestroy {
       .subscribe((scraps: any) => {
         this.scraps = scraps;
         for (let index = 0; index < this.scraps.length; index++) {
-          this.scraps[index].payload_json = JSON.parse(this.scraps[index].payload_json.toString());
-          this.scraps[index].errores = this.scraps[index].payload_json.summary.totales.errores;
-          this.scraps[index].warnings = this.scraps[index].payload_json.summary.totales.warnings;
-          this.scraps[index].oportunidades = this.scraps[index].payload_json.summary.totales.oportunidades;
+          if (this.scraps[index].payload_json != null) {
+            this.scraps[index].payload_json = JSON.parse(this.scraps[index].payload_json.toString());
+            this.scraps[index].errores = this.scraps[index].payload_json.summary.totales.errores;
+            this.scraps[index].warnings = this.scraps[index].payload_json.summary.totales.warnings;
+            this.scraps[index].oportunidades = this.scraps[index].payload_json.summary.totales.oportunidades;
+          }
         }
         this.aplicarFiltros();
       });
     this.resetPagination();
+  }
+
+  private cargarCatalogos(): void {
+    this.leadService.getConceptos().subscribe((c) => (this.conceptos = c || []));
+    this.leadService.getEstados().subscribe((e) => (this.estados = e || []));
+  }
+
+  getConceptoNombre(id: number | null | undefined): string {
+    if (!id || !this.conceptos) return 'Sin datos';
+    const c = this.conceptos.find((x: any) => x.id === id);
+    return c ? c.nombre : 'Sin datos';
+  }
+
+  getEstadoNombre(id: number | null | undefined): string {
+    if (!id || !this.estados) return 'Sin datos';
+    const c = this.estados.find((x: any) => x.id === id);
+    return c ? c.nombre : 'Sin datos';
   }
 
   analyze(): void {
@@ -166,7 +195,7 @@ export class AuditSeoComponent implements OnInit, OnDestroy {
 
     this.reset();
     this.urlAnalizada = url;
-    
+
     this.sub = this.webhokService.puppeter(url, this.userId, 0)
       .pipe(
         catchError(err => {
@@ -178,7 +207,7 @@ export class AuditSeoComponent implements OnInit, OnDestroy {
         finalize(() => (this.loading = false))
       )
       .subscribe((resp: DataResponse | null) => {
-        
+
       });
   }
 
@@ -196,6 +225,10 @@ export class AuditSeoComponent implements OnInit, OnDestroy {
     this.recomendaciones = [];
     this.quickWins = [];
     this.nextSteps = [];
+    this.lead = {
+      usuario_id: 0,
+      fecha_entrada: ''
+    };
   }
 
   private groupNextSteps(nextSteps: any[] = []) {
@@ -332,31 +365,40 @@ export class AuditSeoComponent implements OnInit, OnDestroy {
   verDetalle(s: any) {
     this.scrapSelected = s;         // guarda el scraping seleccionado
     if (!this.scrapSelected) return;
-        this.data = this.scrapSelected.payload_json;
 
-        // Mapear a props de vista
-        this.totales = this.data?.summary?.totales;
-        this.scores = this.data?.summary?.lighthouse_scores;
-        this.kpis = this.data?.summary?.kpis;
-        this.topRisks = this.data?.summary?.top_risks ?? [];
-        this.hallazgos = this.data?.hallazgos_unificados ?? [];
-        this.recomendaciones = this.data?.recomendaciones_ia ?? [];
-        this.quickWins = this.data?.quick_wins ?? [];
-        this.nextSteps = this.data?.next_steps ?? [];
-        this.summary = this.data?.summary || {
-    totales: { errores: 0, warnings: 0, oportunidades: 0 },
-    lighthouse_scores: { performance: 0, accessibility: 0, best_practices: 0, seo: 0, pwa: null },
-    kpis: { LCP_ms: null, CLS: null, TBT_ms: null, INP_ms: null, FCP_ms: null },
-    top_risks: []
-  };
-        this.headings = this.data?.headings;
-        this.word_count = this.data?.word_count;
-        this.top_words = this.top_words;
-        this.groupNextSteps(this.nextSteps);
+    if (this.scrapSelected.lead_id) {
+      this.leadService.getLead(this.scrapSelected.lead_id)
+        .pipe()
+        .subscribe((lead) => {
+          this.lead = lead;
+          this.lead.fecha_entrada = new Date(this.lead.fecha_entrada);
+        });
+    }
+    this.data = this.scrapSelected.payload_json;
 
-        // Charts
-        this.charts = this.buildCharts(this.totales, this.scores, this.kpis);
-        this.progress = 100;
+    // Mapear a props de vista
+    this.totales = this.data?.summary?.totales;
+    this.scores = this.data?.summary?.lighthouse_scores;
+    this.kpis = this.data?.summary?.kpis;
+    this.topRisks = this.data?.summary?.top_risks ?? [];
+    this.hallazgos = this.data?.hallazgos_unificados ?? [];
+    this.recomendaciones = this.data?.recomendaciones_ia ?? [];
+    this.quickWins = this.data?.quick_wins ?? [];
+    this.nextSteps = this.data?.next_steps ?? [];
+    this.summary = this.data?.summary || {
+      totales: { errores: 0, warnings: 0, oportunidades: 0 },
+      lighthouse_scores: { performance: 0, accessibility: 0, best_practices: 0, seo: 0, pwa: null },
+      kpis: { LCP_ms: null, CLS: null, TBT_ms: null, INP_ms: null, FCP_ms: null },
+      top_risks: []
+    };
+    this.headings = this.data?.headings;
+    this.word_count = this.data?.word_count;
+    this.top_words = this.top_words;
+    this.groupNextSteps(this.nextSteps);
+
+    // Charts
+    this.charts = this.buildCharts(this.totales, this.scores, this.kpis);
+    this.progress = 100;
     this.detailVisible = true; // muestra el modal (ya con el HTML que montamos antes)
   }
 

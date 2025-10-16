@@ -16,11 +16,12 @@ import { LeadFormComponent } from '../leeds-form/leeds-form.component';
 import { PaginationModule } from '@coreui/angular';
 import { N8nService } from '../../../services/n8n.service';
 import { of } from 'rxjs';
+import { AlertComponent, AlertHeadingDirective } from '@coreui/angular';
 
 @Component({
     selector: 'app-leeds',
     templateUrl: './leeds.component.html',
-    imports: [PaginationModule, ContainerComponent, FormsModule, ButtonDirective, WidgetsBrandComponent, WidgetsDemoComponent, RowComponent, ColComponent, CardGroupComponent, CardComponent, CardBodyComponent, FormDirective,
+    imports: [AlertComponent, AlertHeadingDirective, PaginationModule, ContainerComponent, FormsModule, ButtonDirective, WidgetsBrandComponent, WidgetsDemoComponent, RowComponent, ColComponent, CardGroupComponent, CardComponent, CardBodyComponent, FormDirective,
         ProgressComponent, ModalModule, InputGroupComponent, LeadFormComponent, ReactiveFormsModule, PopoverModule, PopoverDirective, IconModule, TableModule, UtilitiesModule, InputGroupTextDirective, IconDirective, CommonModule]
 })
 export class LeadsComponent implements OnInit {
@@ -30,6 +31,7 @@ export class LeadsComponent implements OnInit {
     conceptos: Concepto[] = [];
     estados: Estado[] = [];
     Math = Math;
+    scraping: boolean = false;
     // Modal generar leads
     showGenModal = false;
     generateForm: FormGroup;
@@ -264,7 +266,7 @@ export class LeadsComponent implements OnInit {
     nuevoLead(): void {
         this.leadSeleccionado = {
             usuario_id: this.userId,
-            fecha_de_entrada: '',
+            fecha_entrada: '',
             empresa: '',
             nombre: '',
             web: '',
@@ -430,10 +432,10 @@ export class LeadsComponent implements OnInit {
 
     const url = (lead.web as string).trim();
     if (!url) return;
-    
+    this.scraping = true;
     this.webhokService.puppeter(url, this.userId, lead.id || 0).subscribe((updated) => {
                 // sustituye en memoria
-
+    this.scraping = false;
     });
   }
 }

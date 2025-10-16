@@ -4,7 +4,7 @@
 
 export const environment = {
     production: false,
-    apiUrl: 'https://logic-ai-b-1.vercel.app'
+    apiUrl: 'http://localhost:4000'
   };
   
   /*

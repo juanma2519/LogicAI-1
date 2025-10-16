@@ -56,7 +56,6 @@
       <thead>
         <tr>
           <th scope="col" style="width:48px">#</th>
-          <th scope="col">Dominio</th>
           <th scope="col">URL</th>
           <th scope="col">Estrategia</th>
           <th scope="col">Estado</th>
@@ -72,26 +71,26 @@
           <th scope="row">{{ s.id }}</th>
 
           <td>
-            <span class="text-light text-truncate d-inline-block" style="max-width:220px">
-              {{ s.dominio || '—' }}
-            </span>
-          </td>
-
-          <td>
-            <span class="badge bg-warning text-dark border text-truncate d-inline-block" style="max-width:320px">
-              {{ s.url }}
+            <span class="badge bg-primary-subtle text-dark border text-truncate d-inline-block" style="max-width:320px">
+              <a [href]="s.url"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="badge bg-primary-subtle text-dark text-truncate d-inline-block"
+                                style="max-width:320px; text-decoration:none; cursor:pointer;">
+                                {{ s.url }}
+              </a>
             </span>
           </td>
 
           <td>
             <span class="badge text-bg-info text-dark text-truncate d-inline-block" style="max-width:120px">
-              {{ (s.estrategia || '—') | titlecase }}
+              {{ (s.estrategia || 'Sin datos') | titlecase }}
             </span>
           </td>
 
           <td>
             <span class="badge" [ngClass]="estadoBadgeClass(s.status)">
-              {{ (s.status || '—') | titlecase }}
+              {{ (s.status || 'Sin datos') | titlecase }}
             </span>
           </td>
 
@@ -163,6 +162,101 @@
     <h5 class="modal-title">Detalle Auditoria</h5>
     <button cButtonClose (click)="detailVisible=false"></button>
   </c-modal-header>
+  <!-- Lead asociado -->
+<ng-container *ngIf="lead as L">
+  <c-card class="mb-3 shadow-sm border-0">
+    <c-card-header class="m-4">
+      <strong>Lead asociado: </strong> {{ L.nombre || 'Sin datos' }}
+      <c-badge *ngIf="L.id" color="secondary" class="ms-2">ID: {{ L.id }}</c-badge>
+    </c-card-header>
+
+    <c-card-body class="shadow p-2 mb-0 m-4">
+      <div class="row g-3 align-items-center">
+
+        <div class="shadow p-2 col-12 col-md-4 border rounded p-2 m-2">
+          <div class="text-muted small">Fecha de entrada</div>
+          <!-- OJO: en tu interfaz es 'fecha_entrada' -->
+          <div class="fw-semibold">
+            {{ L.fecha_entrada | date:'yyyy-MM-dd' }}
+          </div>
+        </div>
+
+        <div class="shadow p-2 col-12 col-md-4 border rounded p-2 m-2">
+          <div class="text-muted small">Nombre</div>
+          <div class="text-truncate">{{ L.nombre || 'Sin datos' }}</div>
+        </div>
+
+        <div class="shadow p-2 col-12 col-md-6 border rounded p-2 m-2">
+          <div class="text-muted small">Web</div>
+          <a *ngIf="L.web" [href]="L.web" target="_blank" rel="noopener"
+             class="badge bg-warning text-dark border text-truncate d-inline-block" style="max-width:100%">
+            {{ L.web }}
+          </a>
+          <span *ngIf="!L.web" class="text-muted">Sin datos</span>
+        </div>
+
+        <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2">
+          <div class="text-muted small">Teléfono</div>
+          <div class="text-truncate">{{ L.telefono || 'Sin datos' }}</div>
+        </div>
+
+        <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2">
+          <div class="text-muted small">Correo</div>
+          <div class="text-truncate">{{ L.correo || 'Sin datos' }}</div>
+        </div>
+
+        <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2">
+          <div class="text-muted small">Ciudad</div>
+          <div class="text-truncate">{{ L.ciudad || 'Sin datos' }}</div>
+        </div>
+
+        <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2">
+          <div class="text-muted small">Negocio</div>
+          <div class="text-truncate">{{ L.negocio || 'Sin datos' }}</div>
+        </div>
+
+        <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2" >
+          <div class="text-muted small">Concepto</div>
+          <span class="badge text-bg-light border">
+            {{
+              L.concepto?.nombre
+              || L.concepto_nombre
+              || (getConceptoNombre?.(L.concepto_id) || 'Sin datos')
+            }}
+          </span>
+        </div>
+
+        <div class="shadow p-2 col-6 col-md-3 border rounded p-2 m-2">
+          <div class="text-muted small">Estado</div>
+          <span class="badge"
+                [ngClass]="{
+                  'text-bg-success': ((L.estado?.nombre || L.estado_nombre) || '').toLowerCase() === 'cerrado',
+                  'text-bg-danger':  ((L.estado?.nombre || L.estado_nombre) || '').toLowerCase() === 'perdido',
+                  'text-bg-warning': ((L.estado?.nombre || L.estado_nombre) || '').startsWith('Pendiente'),
+                  'text-bg-secondary': !(L.estado?.nombre || L.estado_nombre)
+                }">
+            {{
+              L.estado?.nombre
+              || L.estado_nombre
+              || (getEstadoNombre?.(L.estado_id) || 'Sin datos')
+            }}
+          </span>
+        </div>
+
+        <div class="shadow p-2 col-12 border rounded p-2 m-2">
+          <div class="text-muted small">Propietario</div>
+          <div class="text-truncate">{{ L.propietario_relaccion || 'Sin datos' }}</div>
+        </div>
+
+        <div class="shadow p-2 col-12 border rounded p-2 m-2">
+          <div class="text-muted small">Notas</div>
+          <div class="text-break">{{ L.notas || 'Sin datos' }}</div>
+        </div>
+
+      </div>
+    </c-card-body>
+  </c-card>
+</ng-container>
   <c-modal-body>
     <!-- KPIs principales -->
     <div class="row g-3 mt-1 m-4" *ngIf="data">
@@ -407,7 +501,7 @@
             <div class="d-flex justify-content-between align-items-start">
               <strong class="me-2">{{ r.titulo }}</strong>
               <c-badge [color]="(r.prioridad || '').toLowerCase() === 'alta' ? 'danger' : 'warning'">
-                {{ r.prioridad || '—' }}
+                {{ r.prioridad || 'Sin datos' }}
               </c-badge>
             </div>
             <div class="text-muted small mt-1">{{ r.por_que_importa }}</div>
