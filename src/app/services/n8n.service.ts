@@ -22,8 +22,8 @@ export class N8nService {
     return this.http.post(`${environment.apiUrl}/webhooks/${type}`, body, { responseType: 'blob' });
   }
 
-  puppeter(url: string, userId: number): Observable<any> {
-    const body = { url: url, usuario_id: userId }; // Puedes ampliar el objeto si necesitas más campos
+  puppeter(url: string, userId: number, leadId: number): Observable<any> {
+    const body = { url: url, usuario_id: userId, lead_id: leadId }; // Puedes ampliar el objeto si necesitas más campos
     return this.http.post(`${environment.apiUrl}/webhooks/puppeter`, body);
   }
 

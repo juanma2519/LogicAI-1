@@ -207,6 +207,11 @@
                     <c-icon name="cil-pencil"></c-icon>
                 </button>
 
+                <button cButton *ngIf="lead.web" color="info" size="sm" [cPopover]="'Scrap web'" class="me-1 mb-1" [cPopoverTrigger]="'hover'"
+                    class="me-2" [cPopoverPlacement]="'top'" (click)="scrapWeb(lead)">
+                    <c-icon name="cil-pencil"></c-icon>
+                </button>
+
                 <button cButton color="danger" size="sm" [cPopover]="'Eliminar Lead'" class="me-1 mb-1" [cPopoverTrigger]="'hover'"
                     class="me-2" [cPopoverPlacement]="'top'" (click)="borrarLead(lead)">
                     <c-icon name="cil-trash"></c-icon>

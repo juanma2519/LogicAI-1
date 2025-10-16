@@ -4,7 +4,7 @@
 // =====================================
 import { Component, OnInit } from '@angular/core';
 import { Lead, Concepto, Estado } from '../../../models/lead';
-import { finalize } from 'rxjs/operators';
+import { catchError, finalize } from 'rxjs/operators';
 import { LeedsService } from '../../../services/leads.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControlDirective, FormGroup, Validators, FormBuilder } from '@angular/forms';
@@ -14,6 +14,8 @@ import { WidgetsBrandComponent } from '../../widgets/widgets-brand/widgets-brand
 import { WidgetsDemoComponent } from '../../widgets/widgets-demo/widgets-demo.component';
 import { LeadFormComponent } from '../leeds-form/leeds-form.component';
 import { PaginationModule } from '@coreui/angular';
+import { N8nService } from '../../../services/n8n.service';
+import { of } from 'rxjs';
 
 @Component({
     selector: 'app-leeds',
@@ -109,7 +111,7 @@ export class LeadsComponent implements OnInit {
     // Ajusta de dónde tomas el usuario (auth service, etc.)
     private userId = Number(localStorage.getItem('userId'));
 
-    constructor(private api: LeedsService, private fb: FormBuilder,) {
+    constructor(private api: LeedsService, private fb: FormBuilder, private webhokService: N8nService) {
         this.generateForm = this.fb.group({
             negocio: ['', Validators.required],
             ciudad: ['', Validators.required],
@@ -421,4 +423,19 @@ export class LeadsComponent implements OnInit {
     cancelarGeneracion() {
         this.confirmGenerateModal = false;
     }
+
+    
+  scrapWeb(lead: Lead): void {
+    if (!lead) return;
+
+    const url = (lead.web as string).trim();
+    if (!url) return;
+    
+    this.webhokService.puppeter(url, this.userId, lead.id || 0)
+      .pipe(
+        catchError(err => {
+          return of(null);
+        })
+      );
+  }
 }
