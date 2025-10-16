@@ -167,7 +167,7 @@ export class AuditSeoComponent implements OnInit, OnDestroy {
     this.reset();
     this.urlAnalizada = url;
     
-    this.sub = this.webhokService.puppeter(url, this.userId)
+    this.sub = this.webhokService.puppeter(url, this.userId, 0)
       .pipe(
         catchError(err => {
           console.error('[AuditSEO] Error:', err);
