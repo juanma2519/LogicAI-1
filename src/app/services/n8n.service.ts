@@ -31,6 +31,10 @@ export class N8nService {
     return this.http.get<SeoAuditItem[]>(`${environment.apiUrl}/webhooks/puppeter/${userId}`);
   }
 
+  getScrapById(consultoria_id: number): Observable<any> {
+    return this.http.get<SeoAuditItem[]>(`${environment.apiUrl}/webhooks/puppeter/consultoria/${consultoria_id}`);
+  }
+
     // audit-seo.service.ts
   enviarWhatsApp(consultoriaId: number, usuario_id: number, body: { to?: string; messageOverride?: string }) {
     return this.http.post(`${environment.apiUrl}/webhooks/consultorias/${consultoriaId}/enviar-whatsapp/${usuario_id}`, body);

@@ -69,6 +69,11 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'email-marketing/:id',
+    loadComponent: () => import('./views/pages/email-marketing/email-marketing.component').then(m => m.EmailMarketingComponent),
+    data: { title: 'Email Marketing - Análisis' }
+  },
+  {
     path: '404',
     loadComponent: () => import('./views/pages/page404/page404.component').then(m => m.Page404Component),
     data: { title: 'Page 404' }

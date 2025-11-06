@@ -1,0 +1,297 @@
+// Animaciones y estilos para Email Marketing Component
+
+// Header mejorado
+.header-enhanced {
+  background: linear-gradient(135deg, rgba(13, 110, 253, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+  border-left: 4px solid #0d6efd;
+  
+  .header-logo {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+  }
+  
+  .progress-section {
+    min-width: 200px;
+  }
+}
+
+// Info de métricas
+.metric-info {
+  cursor: help;
+  font-size: 0.85rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.metric-explanation {
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+// Clases de animación
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.6s ease-out forwards;
+}
+
+.animate-delay-1 {
+  animation-delay: 0.1s;
+  opacity: 0;
+}
+
+.animate-delay-2 {
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+
+.animate-delay-3 {
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+
+.animate-delay-4 {
+  animation-delay: 0.4s;
+  opacity: 0;
+}
+
+// Cards con hover effect
+.card-hover {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+  }
+}
+
+// Score cards con animación de número
+.score-card {
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+  
+  &:hover::before {
+    left: 100%;
+  }
+}
+
+// Badge con pulso
+.badge-pulse {
+  animation: pulse 2s infinite;
+}
+
+// Texto narrativo destacado
+.narrative-text {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #495057;
+  
+  &.highlight {
+    color: #0d6efd;
+    font-weight: 500;
+  }
+}
+
+// Sección con gradiente sutil
+.section-gradient {
+  background: linear-gradient(135deg, rgba(13, 110, 253, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+// Iconos decorativos
+.decorative-icon {
+  font-size: 3rem;
+  opacity: 0.1;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  z-index: 0;
+}
+
+// Progress bar animado
+.progress-animated {
+  transition: width 0.8s ease-out;
+}
+
+// Botones con efecto
+.btn-animated {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Tab content con fade
+.tab-content-wrapper {
+  min-height: 400px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+// Transición suave para cambios de tab
+c-tab-panel {
+  display: block;
+  animation: fadeIn 0.4s ease-out;
+}
+
+// Números grandes con animación
+.big-number {
+  font-weight: 700;
+  font-size: 2.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+// Separador decorativo
+.decorative-divider {
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #0d6efd, transparent);
+  margin: 2rem 0;
+  border-radius: 2px;
+}
+
+// Callout destacado
+.callout-box {
+  background: linear-gradient(135deg, rgba(13, 110, 253, 0.1) 0%, rgba(13, 110, 253, 0.05) 100%);
+  border-left: 4px solid #0d6efd;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  
+  p {
+    margin-bottom: 0.5rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Lista con iconos
+.list-with-icons {
+  list-style: none;
+  padding-left: 0;
+  
+  li {
+    padding: 0.75rem 0;
+    padding-left: 2rem;
+    position: relative;
+    
+    &::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #198754;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+  }
+}
+
+// Efecto de entrada escalonado para cards
+.card-stagger {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards;
+  
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+  &:nth-child(4) { animation-delay: 0.4s; }
+  &:nth-child(5) { animation-delay: 0.5s; }
+  &:nth-child(6) { animation-delay: 0.6s; }
+  &:nth-child(7) { animation-delay: 0.7s; }
+  &:nth-child(8) { animation-delay: 0.8s; }
+  &:nth-child(9) { animation-delay: 0.9s; }
+  &:nth-child(10) { animation-delay: 1.0s; }
+}
+
