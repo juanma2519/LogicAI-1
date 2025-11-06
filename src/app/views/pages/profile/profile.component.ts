@@ -4,16 +4,15 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup, FormsModule } from '@angular/forms';
 import { ProfileService, UsuarioApi } from '../../../services/profile.service';
 import { Router } from '@angular/router';
-import { ContainerComponent, ButtonDirective, RowComponent, ColComponent, CardGroupComponent, CardComponent, CardBodyComponent, FormDirective, PopoverModule, TableModule, UtilitiesModule } from '@coreui/angular';
+import { ButtonDirective, PopoverModule, TableModule, UtilitiesModule, BadgeComponent, FormCheckLabelDirective, FormCheckComponent, FormCheckInputDirective, CardComponent, CardBodyComponent, CardHeaderComponent } from '@coreui/angular';
 import { IconModule, IconDirective } from '@coreui/icons-angular';
-import { WidgetsBrandComponent } from '../../widgets/widgets-brand/widgets-brand.component';
-import { WidgetsDemoComponent } from '../../widgets/widgets-demo/widgets-demo.component';
+import { WhatsAppCredentialDTO, WhatsAppService } from '../../../services/whatsapp.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ContainerComponent, FormsModule, ButtonDirective, WidgetsBrandComponent, WidgetsDemoComponent, RowComponent, ColComponent, CardGroupComponent, CardComponent, CardBodyComponent, FormDirective,
-       PopoverModule, IconModule, TableModule, UtilitiesModule, IconDirective],
+  imports: [CommonModule, BadgeComponent, FormCheckComponent, FormCheckInputDirective, FormCheckLabelDirective, ReactiveFormsModule, FormsModule, ButtonDirective,
+       PopoverModule, IconModule, TableModule, UtilitiesModule, IconDirective, CardComponent],
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {
@@ -21,17 +20,20 @@ export class ProfileComponent implements OnInit {
   saving = false;
   error?: string;
   success?: string;
+  showToken:boolean = false;
 
   userId!: number;
   // Para mostrar solo lectura:
   creditDisplay: string = '0';
 
   form!: FormGroup;
+  whatsappForm!: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private profile: ProfileService,
-    private router: Router
+    private router: Router,
+    private whatsappSvc: WhatsAppService,
   ) {}
 
   ngOnInit(): void {
@@ -60,8 +62,46 @@ export class ProfileComponent implements OnInit {
         password: ['']
     });
 
+    // >>> NUEVO: bloque WhatsApp
+    this.whatsappForm = this.fb.group({
+      enabled: [false],
+      waba_id: [''],
+      phone_number_id: [''],
+      access_token: [''],
+      api_url: ['', [Validators.pattern(/^https?:\/\/.+/i)]],
+      default_recipient: ['', [Validators.pattern(/^\+?\d[\d\s\-()]{6,}$/)]],
+      template_name: [''],
+      sender_name: [''],
+    }),
+
     this.loadUser();
   }
+
+  updateWhatsapp() {
+  const formValue = this.whatsappForm.value; // ajusta al nombre real de tu form
+
+  const dto: WhatsAppCredentialDTO = {
+    usuario_id: this.userId,                   // p.ej. obtenido de auth
+    waba_id: formValue.waba_id || null,
+    phone_number_id: formValue.phone_number_id || null,
+    access_token: formValue.access_token || null,
+    n8n_webhook_url: formValue.n8n_webhook_url || null,
+    default_recipient: formValue.default_recipient || null,
+    enabled: !!formValue.enabled
+  };
+
+  this.saving = true;
+  this.whatsappSvc.upsertCredentials(dto).subscribe({
+    next: (res) => {
+      this.saving = false;
+      // muestra toast / badge de éxito
+    },
+    error: (err) => {
+      this.saving = false;
+      // muestra toast de error
+    }
+  });
+}
 
   public loadUser() {
     this.loading = true;
@@ -75,6 +115,18 @@ export class ProfileComponent implements OnInit {
         this.loading = false;
         this.error = this.parseErr(err);
       }
+    });
+
+     // cargar credenciales de WhatsApp
+    this.whatsappSvc.getCredentials(this.userId).subscribe((cfg:WhatsAppCredentialDTO ) => {
+      // si no hay registro, llega undefined -> patchValue ignora
+      this.whatsappForm.patchValue({
+        enabled: !!cfg?.enabled,
+        waba_id: cfg?.waba_id || '',
+        phone_number_id: cfg?.phone_number_id || '',
+        access_token: cfg?.access_token || '',
+        default_recipient: cfg?.default_recipient || '',
+      });
     });
   }
 
@@ -150,4 +202,18 @@ export class ProfileComponent implements OnInit {
     if (typeof err?.message === 'string') return err.message;
     return 'No se pudo actualizar el perfil.';
   }
+
+  testWhatsapp(): void {
+  if (this.whatsappForm.invalid) {
+    this.whatsappForm.markAllAsTouched();
+    return;
+  }
+  const wa = this.whatsappForm.getRawValue();
+  // Puedes enviar el texto que quieras; aquí un ejemplo básico:
+  this.whatsappSvc.sendTest({
+    to: wa.default_recipient,
+    message: 'Mensaje de prueba desde tu panel: configuración OK ✅',
+    usuario_id: this.userId
+  }).subscribe();
+}
 }

@@ -1,15 +1,9 @@
 <!--sidebar-->
-<c-sidebar #sidebar1="cSidebar" class="d-print-none sidebar sidebar-fixed border-end" colorScheme="dark" id="sidebar1"
+<c-sidebar #sidebar1="cSidebar" class="d-print-none sidebar sidebar-fixed border-end" colorScheme="dark" id="sidebar1" style="background: radial-gradient(1200px 500px at 70% -10%, rgba(96, 165, 250, .12), transparent 60%), radial-gradient(900px 600px at 10% 100%, rgba(59, 130, 246, .1), transparent 60%), linear-gradient(180deg, #0a0f1a, #0b1220 60% 100%);"
   visible>
   <c-sidebar-header class="border-bottom">
-    <c-sidebar-brand [routerLink]="[]">
-      <div class="d-flex align-items-center gap-2">
-        <h2 class="mb-0">Solai</h2>
-        <img [src]="'../../../assets/solai.png'" alt="Avatar" class="rounded-circle shadow-sm"
-          style="width: 40px; height: 40px; object-fit: cover;" />
-      </div>
-
-    </c-sidebar-brand>
+            <img [src]="'../../../assets/logicAI.png'" alt="Avatar" class="rounded-circle shadow-sm"
+          style="width: 50%; height: 65px; object-fit: cover;" />
   </c-sidebar-header>
 
   <ng-scrollbar pointerEventsMethod="scrollbar" visibility="hover">

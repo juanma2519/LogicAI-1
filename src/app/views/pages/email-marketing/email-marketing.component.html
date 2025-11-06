@@ -1,0 +1,705 @@
+<!-- Email Marketing Component - Answer First Structure -->
+<!-- Ocultar widget de ElevenLabs en esta página -->
+<style>
+  elevenlabs-convai {
+    display: none !important;
+  }
+</style>
+
+<!-- Widget de llamada telefónica flotante -->
+<div class="phone-widget" (click)="callPhone()">
+  <div class="phone-widget-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+  </div>
+  <div class="phone-widget-text">Llamar</div>
+</div>
+
+<div *ngIf="loading" class="d-flex align-items-center justify-content-center" style="min-height:40vh">
+  <c-spinner color="primary" size="sm" class="me-2 animate-fade-in"></c-spinner>
+  <span class="animate-fade-in animate-delay-1">Cargando análisis…</span>
+</div>
+
+<div *ngIf="!loading && consultoria && report" class="vstack gap-3 animate-fade-in">
+
+  <!-- Header Mejorado -->
+  <c-card class="border-0 shadow-lg header-enhanced animate-fade-in-up">
+    <c-card-body class="p-4">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-4">
+        <!-- Logo y título -->
+        <div class="d-flex align-items-center gap-3">
+          <img src="assets/logicAI.png" alt="LogicAI" class="header-logo" />
+          <div>
+            <div class="small text-muted mb-1">Análisis de</div>
+            <h3 class="mb-1 fw-bold">{{ consultoria['dominio'] || meta?.['url'] || '—' }}</h3>
+            <div class="d-flex flex-wrap gap-3 mt-2">
+              <span class="badge bg-primary">
+                <strong>Estrategia:</strong> {{ meta?.['strategy'] || consultoria['estrategia'] }}
+              </span>
+              <span class="badge bg-success">
+                <strong>Estado:</strong> {{ consultoria['status'] }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <!-- Progress -->
+        <div class="progress-section">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="small fw-semibold">Progreso del análisis</span>
+            <span class="small text-muted ms-3">Paso {{ step + 1 }} de 4</span>
+          </div>
+          <c-progress thin color="primary" [value]="progress" class="progress-animated mb-2"></c-progress>
+          <div class="small text-muted text-center">{{ Math.round(progress) }}% completado</div>
+        </div>
+      </div>
+    </c-card-body>
+  </c-card>
+
+  <!-- Step Nav (como stepper) -->
+  <c-tabs [activeItemKey]="step" (activeItemKeyChange)="goTo($event)" class="animate-fade-in-up animate-delay-1">
+    <c-tabs-list variant="tabs">
+      <button cTab [itemKey]="0">Respuesta</button>
+      <button cTab [itemKey]="1">Razones</button>
+      <button cTab [itemKey]="2">Evidencia</button>
+      <button cTab [itemKey]="3">Siguiente Paso</button>
+    </c-tabs-list>
+
+    <!-- 1) ANSWER FIRST - Conclusión inmediata con datos más relevantes -->
+    <c-tabs-content>
+      <c-tab-panel [itemKey]="0" class="tab-content-wrapper">
+        <!-- Título y texto narrativo -->
+        <div class="section-gradient animate-fade-in-up mb-4">
+          <h2 class="mb-3">{{ getStepTitle(0) }}</h2>
+          <p class="narrative-text">
+            {{ getNarrativeText(0) }}
+          </p>
+        </div>
+
+        <c-card class="border-0 shadow-sm mb-3 card-hover animate-fade-in-up animate-delay-2">
+          <c-card-body>
+            <h3 class="mb-3">{{ getHeadline() }}</h3>
+            <div class="text-muted mb-4">URL analizada: 
+              <a *ngIf="meta?.['url']" [href]="meta?.['url']" target="_blank" rel="noopener" class="link-primary">{{ meta?.['url'] }}</a>
+            </div>
+
+            <!-- Callout destacado -->
+            <div class="callout-box mb-4 animate-fade-in animate-delay-3">
+              <p class="mb-0">
+                <strong>💡 Lo más importante:</strong> Estos números te dan una visión inmediata del estado de tu sitio. 
+                Los colores te indican si cada métrica está en un nivel óptimo (verde), necesita atención (amarillo) o requiere acción urgente (rojo).
+              </p>
+            </div>
+
+            <!-- Score Global y KPIs Principales -->
+            <div class="row g-3 mb-4">
+              <div class="col-6 col-md-3 card-stagger">
+                <c-card class="shadow-sm border-0 score-card card-hover">
+                  <c-card-body class="py-3 text-center">
+                    <div class="d-flex align-items-center justify-content-center gap-1 mb-2">
+                      <span class="text-muted small">Performance</span>
+                      <span class="metric-info" [attr.title]="'Mide la velocidad de carga y la capacidad de respuesta de tu sitio. Un valor alto significa que tu sitio carga rápido y responde bien a las interacciones del usuario.'">ℹ️</span>
+                    </div>
+                    <div class="h2 m-0 big-number" [class.text-danger]="(scores?.['performance'] ?? 0) < 0.5" 
+                         [class.text-warning]="(scores?.['performance'] ?? 0) >= 0.5 && (scores?.['performance'] ?? 0) < 0.9"
+                         [class.text-success]="(scores?.['performance'] ?? 0) >= 0.9">
+                      {{ (scores?.['performance'] ?? 0) * 100 | number:'1.0-0' }}%
+                    </div>
+                    <div class="small text-muted mt-1 metric-explanation">
+                      {{ (scores?.['performance'] ?? 0) >= 0.9 ? 'Excelente rendimiento' : (scores?.['performance'] ?? 0) >= 0.5 ? 'Rendimiento mejorable' : 'Requiere optimización urgente' }}
+                    </div>
+                  </c-card-body>
+                </c-card>
+              </div>
+              <div class="col-6 col-md-3 card-stagger">
+                <c-card class="shadow-sm border-0 score-card card-hover">
+                  <c-card-body class="py-3 text-center">
+                    <div class="d-flex align-items-center justify-content-center gap-1 mb-2">
+                      <span class="text-muted small">SEO</span>
+                      <span class="metric-info" [attr.title]="'Evalúa qué tan bien está optimizado tu sitio para los motores de búsqueda. Incluye elementos como meta tags, estructura de contenido y enlaces.'">ℹ️</span>
+                    </div>
+                    <div class="h2 m-0 big-number" [class.text-danger]="(scores?.['seo'] ?? 0) < 0.5" 
+                         [class.text-warning]="(scores?.['seo'] ?? 0) >= 0.5 && (scores?.['seo'] ?? 0) < 0.9"
+                         [class.text-success]="(scores?.['seo'] ?? 0) >= 0.9">
+                      {{ (scores?.['seo'] ?? 0) * 100 | number:'1.0-0' }}%
+                    </div>
+                    <div class="small text-muted mt-1 metric-explanation">
+                      {{ (scores?.['seo'] ?? 0) >= 0.9 ? 'Bien optimizado para SEO' : (scores?.['seo'] ?? 0) >= 0.5 ? 'Mejoras SEO necesarias' : 'SEO requiere atención' }}
+                    </div>
+                  </c-card-body>
+                </c-card>
+              </div>
+              <div class="col-6 col-md-3 card-stagger">
+                <c-card class="shadow-sm border-0 score-card card-hover">
+                  <c-card-body class="py-3 text-center">
+                    <div class="d-flex align-items-center justify-content-center gap-1 mb-2">
+                      <span class="text-muted small">Accesibilidad</span>
+                      <span class="metric-info" [attr.title]="'Mide qué tan accesible es tu sitio para personas con discapacidades. Incluye contraste de colores, etiquetas alt en imágenes, y navegación por teclado.'">ℹ️</span>
+                    </div>
+                    <div class="h2 m-0 big-number" [class.text-danger]="(scores?.['accessibility'] ?? 0) < 0.5" 
+                         [class.text-warning]="(scores?.['accessibility'] ?? 0) >= 0.5 && (scores?.['accessibility'] ?? 0) < 0.9"
+                         [class.text-success]="(scores?.['accessibility'] ?? 0) >= 0.9">
+                      {{ (scores?.['accessibility'] ?? 0) * 100 | number:'1.0-0' }}%
+                    </div>
+                    <div class="small text-muted mt-1 metric-explanation">
+                      {{ (scores?.['accessibility'] ?? 0) >= 0.9 ? 'Muy accesible' : (scores?.['accessibility'] ?? 0) >= 0.5 ? 'Accesibilidad mejorable' : 'Barreras de accesibilidad detectadas' }}
+                    </div>
+                  </c-card-body>
+                </c-card>
+              </div>
+              <div class="col-6 col-md-3 card-stagger">
+                <c-card class="shadow-sm border-0 score-card card-hover">
+                  <c-card-body class="py-3 text-center">
+                    <div class="d-flex align-items-center justify-content-center gap-1 mb-2">
+                      <span class="text-muted small">Best Practices</span>
+                      <span class="metric-info" [attr.title]="'Evalúa el uso de buenas prácticas web modernas, como HTTPS, políticas de seguridad, y evitar APIs deprecadas.'">ℹ️</span>
+                    </div>
+                    <div class="h2 m-0 big-number" [class.text-danger]="(scores?.['best_practices'] ?? 0) < 0.5" 
+                         [class.text-warning]="(scores?.['best_practices'] ?? 0) >= 0.5 && (scores?.['best_practices'] ?? 0) < 0.9"
+                         [class.text-success]="(scores?.['best_practices'] ?? 0) >= 0.9">
+                      {{ (scores?.['best_practices'] ?? 0) * 100 | number:'1.0-0' }}%
+                    </div>
+                    <div class="small text-muted mt-1 metric-explanation">
+                      {{ (scores?.['best_practices'] ?? 0) >= 0.9 ? 'Cumple buenas prácticas' : (scores?.['best_practices'] ?? 0) >= 0.5 ? 'Algunas mejoras necesarias' : 'Actualización de prácticas requerida' }}
+                    </div>
+                  </c-card-body>
+                </c-card>
+              </div>
+            </div>
+
+            <div class="decorative-divider"></div>
+
+            <!-- KPIs Principales -->
+            <h5 class="mb-3 animate-fade-in animate-delay-4">Métricas Clave de Rendimiento</h5>
+            <p class="text-muted mb-4 narrative-text animate-fade-in animate-delay-4">
+              Estas métricas te muestran el rendimiento real de tu sitio web. Cada una mide aspectos diferentes pero igualmente importantes para la experiencia del usuario.
+            </p>
+            <div class="row g-3 mb-4">
+              <div class="col-6 col-md-3 card-stagger">
+                <c-card class="shadow-sm border-0 card-hover">
+                  <c-card-body class="py-3 bg-danger text-white">
+                    <div class="text-white-50 small">Errores</div>
+                    <div class="h3 m-0">{{ totales?.['errores'] ?? 0 }}</div>
+                  </c-card-body>
+                </c-card>
+              </div>
+              <div class="col-6 col-md-3 card-stagger">
+                <c-card class="shadow-sm border-0 card-hover">
+                  <c-card-body class="py-3 bg-warning text-white">
+                    <div class="text-white-50 small">Warnings</div>
+                    <div class="h3 m-0">{{ totales?.['warnings'] ?? 0 }}</div>
+                  </c-card-body>
+                </c-card>
+              </div>
+              <div class="col-6 col-md-3 card-stagger">
+                <c-card class="shadow-sm border-0 card-hover">
+                  <c-card-body class="py-3 bg-success text-white">
+                    <div class="text-white-50 small">Oportunidades</div>
+                    <div class="h3 m-0">{{ totales?.['oportunidades'] ?? 0 }}</div>
+                  </c-card-body>
+                </c-card>
+              </div>
+              <div class="col-6 col-md-3 card-stagger">
+                <c-card class="shadow-sm border-0 card-hover">
+                  <c-card-body class="py-3">
+                    <div class="d-flex align-items-center justify-content-center gap-1">
+                      <span class="text-muted small">LCP</span>
+                      <span class="metric-info" [attr.title]="'Largest Contentful Paint: Tiempo que tarda en cargar el elemento más grande visible. Ideal: menos de 2.5 segundos.'">ℹ️</span>
+                    </div>
+                    <div class="h3 m-0">{{ kpis?.['LCP_ms'] ?? '—' }} ms</div>
+                    <div class="small text-muted mt-1">
+                      {{ (kpis?.['LCP_ms'] ?? 0) < 2500 ? 'Excelente tiempo de carga' : (kpis?.['LCP_ms'] ?? 0) < 4000 ? 'Tiempo aceptable' : 'Requiere optimización' }}
+                    </div>
+                  </c-card-body>
+                </c-card>
+              </div>
+            </div>
+
+            <!-- Top Risks Principales -->
+            <div *ngIf="topRisks?.length" class="mt-4 animate-fade-in-up">
+              <div class="d-flex align-items-center mb-3">
+                <h5 class="mb-0 me-2">Riesgos Principales Detectados</h5>
+                <c-badge color="danger" class="badge-pulse">{{ topRisks.length }}</c-badge>
+              </div>
+              <p class="text-muted mb-4 narrative-text">
+                Estos son los problemas más críticos que hemos identificado en tu sitio. Cada uno tiene un impacto directo en tu rendimiento, SEO o experiencia de usuario.
+              </p>
+              <div class="row g-3">
+                <div class="col-12 col-md-6 card-stagger" *ngFor="let risk of topRisks.slice(0, 4)">
+                  <c-card class="h-100 shadow-sm border-0 card-hover">
+                    <c-card-body>
+                      <div class="d-flex align-items-start justify-content-between mb-2">
+                        <h6 class="mb-0">{{ risk['titulo'] }}</h6>
+                        <c-badge [color]="getPriorityColor(risk['prioridad'])">
+                          {{ risk['prioridad'] }}
+                        </c-badge>
+                      </div>
+                      <p class="text-muted small mb-0">{{ risk['por_que_importa'] }}</p>
+                    </c-card-body>
+                  </c-card>
+                </div>
+              </div>
+            </div>
+          </c-card-body>
+        </c-card>
+      </c-tab-panel>
+
+      <!-- 2) RAZONES - Las causas que explican el resultado -->
+      <c-tab-panel [itemKey]="1" class="tab-content-wrapper">
+        <!-- Título y texto narrativo -->
+        <div class="section-gradient animate-fade-in-up mb-4">
+          <h2 class="mb-3">{{ getStepTitle(1) }}</h2>
+          <p class="narrative-text">
+            {{ getNarrativeText(1) }}
+          </p>
+        </div>
+
+        <c-card class="border-0 shadow-sm mb-3 card-hover animate-fade-in-up animate-delay-1">
+          <c-card-body>
+            <div class="callout-box mb-4">
+              <p class="mb-0">
+                <strong>🔍 Entendiendo el "por qué":</strong> No basta con saber qué está mal. 
+                Entender las causas raíz te permite priorizar mejor tus esfuerzos y tomar decisiones informadas sobre dónde invertir tu tiempo y recursos.
+              </p>
+            </div>
+            
+            <div class="row g-3">
+              <div class="col-12 col-md-6 card-stagger" *ngFor="let r of getReasons()">
+                <c-card class="h-100 shadow-sm border-0 card-hover">
+                  <c-card-body>
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                      <h6 class="mb-0">{{ r['title'] }}</h6>
+                      <c-badge *ngIf="r['prioridad']" [color]="getPriorityColor(r['prioridad'])">
+                        {{ r['prioridad'] }}
+                      </c-badge>
+                    </div>
+                    <div class="text-muted small">{{ r['desc'] }}</div>
+                  </c-card-body>
+                </c-card>
+              </div>
+            </div>
+          </c-card-body>
+        </c-card>
+
+        <!-- Recomendaciones IA -->
+        <c-card class="border-0 shadow-sm card-hover animate-fade-in-up animate-delay-2" *ngIf="recomendaciones?.length">
+          <c-card-header>
+            <h5 class="mb-0">🤖 Recomendaciones de IA</h5>
+          </c-card-header>
+          <c-card-body>
+            <p class="text-muted mb-4 narrative-text">
+              Nuestra inteligencia artificial ha analizado todos los datos y ha generado recomendaciones específicas para tu sitio. 
+              Cada una incluye el esfuerzo requerido y el impacto esperado.
+            </p>
+            <div class="vstack gap-3">
+              <div *ngFor="let r of recomendaciones" class="p-3 rounded border card-hover animate-slide-in-right">
+                <div class="d-flex align-items-start gap-2">
+                  <c-badge [color]="getPriorityColor(r['esfuerzo'] || 'media')" class="mt-1">
+                    {{ r['esfuerzo'] || 'medio' }}
+                  </c-badge>
+                  <div class="flex-grow-1">
+                    <strong>{{ r['titulo'] }}</strong>
+                    <div class="text-muted small mt-1">{{ r['rationale'] }}</div>
+                    <div class="text-muted small mt-2" *ngIf="r['impacto_esperado']">
+                      <strong>Impacto esperado:</strong> {{ r['impacto_esperado'] }}
+                    </div>
+                    <ul class="list-with-icons small mt-2 mb-0" *ngIf="r['tareas']?.length">
+                      <li *ngFor="let t of r['tareas']">{{ t }}</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </c-card-body>
+        </c-card>
+      </c-tab-panel>
+
+      <!-- 3) EVIDENCIA - Pruebas que respaldan las razones -->
+      <c-tab-panel [itemKey]="2" class="tab-content-wrapper">
+        <!-- Título y texto narrativo -->
+        <div class="section-gradient animate-fade-in-up mb-4">
+          <h2 class="mb-3">{{ getStepTitle(2) }}</h2>
+          <p class="narrative-text">
+            {{ getNarrativeText(2) }}
+          </p>
+        </div>
+
+        <div class="callout-box mb-4 animate-fade-in animate-delay-1">
+          <p class="mb-0">
+            <strong>📊 Datos que hablan por sí solos:</strong> Cada número aquí tiene una historia. 
+            Estos son los datos técnicos reales que respaldan nuestras conclusiones y te permiten medir el impacto de las mejoras.
+          </p>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <!-- KPIs Detallados -->
+          <div class="col-12 col-md-6 card-stagger">
+            <c-card class="shadow-sm border-0 h-100 card-hover">
+              <c-card-header><strong>⚡ Métricas de Rendimiento (KPIs)</strong></c-card-header>
+              <c-card-body>
+                <p class="text-muted small mb-3">
+                  Estas métricas miden la velocidad y fluidez de tu sitio. Valores más bajos son mejores, 
+                  especialmente para LCP, FCP, TBT e INP. CLS debe estar cerca de 0.
+                </p>
+                <div class="table-responsive">
+                  <table class="table table-sm mb-0">
+                    <tbody>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center gap-1">
+                            <strong>LCP (Largest Contentful Paint)</strong>
+                            <span class="metric-info" [attr.title]="'Tiempo que tarda en cargar el elemento más grande visible. Ideal: menos de 2.5 segundos.'">ℹ️</span>
+                          </div>
+                          <div class="small text-muted">Tiempo de carga del contenido principal</div>
+                        </td>
+                        <td class="text-end align-middle">
+                          <strong>{{ kpis?.['LCP_ms'] ?? '—' }} ms</strong>
+                          <div class="small text-muted" *ngIf="kpis?.['LCP_ms']">
+                            {{ (kpis?.['LCP_ms'] ?? 0) < 2500 ? '✅ Excelente' : (kpis?.['LCP_ms'] ?? 0) < 4000 ? '⚠️ Aceptable' : '❌ Mejorable' }}
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center gap-1">
+                            <strong>FCP (First Contentful Paint)</strong>
+                            <span class="metric-info" [attr.title]="'Tiempo hasta que se muestra el primer elemento de contenido. Ideal: menos de 1.8 segundos.'">ℹ️</span>
+                          </div>
+                          <div class="small text-muted">Primera señal visual de carga</div>
+                        </td>
+                        <td class="text-end align-middle">
+                          <strong>{{ kpis?.['FCP_ms'] ?? '—' }} ms</strong>
+                          <div class="small text-muted" *ngIf="kpis?.['FCP_ms']">
+                            {{ (kpis?.['FCP_ms'] ?? 0) < 1800 ? '✅ Excelente' : (kpis?.['FCP_ms'] ?? 0) < 3000 ? '⚠️ Aceptable' : '❌ Mejorable' }}
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center gap-1">
+                            <strong>CLS (Cumulative Layout Shift)</strong>
+                            <span class="metric-info" [attr.title]="'Mide la estabilidad visual. Valores cercanos a 0 indican que el contenido no se mueve durante la carga. Ideal: menos de 0.1.'">ℹ️</span>
+                          </div>
+                          <div class="small text-muted">Estabilidad visual del contenido</div>
+                        </td>
+                        <td class="text-end align-middle">
+                          <strong>{{ kpis?.['CLS'] ?? '—' }}</strong>
+                          <div class="small text-muted" *ngIf="kpis?.['CLS'] !== null && kpis?.['CLS'] !== undefined">
+                            {{ (kpis?.['CLS'] ?? 0) < 0.1 ? '✅ Excelente' : (kpis?.['CLS'] ?? 0) < 0.25 ? '⚠️ Aceptable' : '❌ Mejorable' }}
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center gap-1">
+                            <strong>TBT (Total Blocking Time)</strong>
+                            <span class="metric-info" [attr.title]="'Tiempo total que el hilo principal está bloqueado impidiendo la interactividad. Ideal: menos de 200ms.'">ℹ️</span>
+                          </div>
+                          <div class="small text-muted">Tiempo bloqueado del hilo principal</div>
+                        </td>
+                        <td class="text-end align-middle">
+                          <strong>{{ kpis?.['TBT_ms'] ?? '—' }} ms</strong>
+                          <div class="small text-muted" *ngIf="kpis?.['TBT_ms']">
+                            {{ (kpis?.['TBT_ms'] ?? 0) < 200 ? '✅ Excelente' : (kpis?.['TBT_ms'] ?? 0) < 600 ? '⚠️ Aceptable' : '❌ Mejorable' }}
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center gap-1">
+                            <strong>INP (Interaction to Next Paint)</strong>
+                            <span class="metric-info" [attr.title]="'Mide la capacidad de respuesta a las interacciones del usuario. Ideal: menos de 200ms.'">ℹ️</span>
+                          </div>
+                          <div class="small text-muted">Capacidad de respuesta a interacciones</div>
+                        </td>
+                        <td class="text-end align-middle">
+                          <strong>{{ kpis?.['INP_ms'] ?? '—' }} ms</strong>
+                          <div class="small text-muted" *ngIf="kpis?.['INP_ms']">
+                            {{ (kpis?.['INP_ms'] ?? 0) < 200 ? '✅ Excelente' : (kpis?.['INP_ms'] ?? 0) < 500 ? '⚠️ Aceptable' : '❌ Mejorable' }}
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </c-card-body>
+            </c-card>
+          </div>
+
+          <!-- Resumen de Contenido -->
+          <div class="col-12 col-md-6 card-stagger">
+            <c-card class="shadow-sm border-0 h-100 card-hover">
+              <c-card-header><strong>📝 Análisis de Contenido</strong></c-card-header>
+              <c-card-body>
+                <p class="text-muted small mb-3">
+                  El contenido es el corazón de tu SEO. Una buena estructura de encabezados y enlaces internos 
+                  ayuda tanto a los usuarios como a los motores de búsqueda.
+                </p>
+                <div class="row g-3 mb-3">
+                  <div class="col-6">
+                    <div class="d-flex align-items-center gap-1 mb-1">
+                      <span class="text-muted small">Palabras totales</span>
+                      <span class="metric-info" [attr.title]="'El número total de palabras en la página. Un contenido con más de 300 palabras suele ser mejor para SEO.'">ℹ️</span>
+                    </div>
+                    <div class="h4 mb-0 big-number">{{ report['word_count'] || 0 }}</div>
+                    <div class="small text-muted mt-1">
+                      {{ (report['word_count'] ?? 0) >= 300 ? '✅ Buen volumen de contenido' : (report['word_count'] ?? 0) >= 150 ? '⚠️ Contenido aceptable' : '❌ Contenido escaso' }}
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="d-flex align-items-center gap-1 mb-1">
+                      <span class="text-muted small">Enlaces totales</span>
+                      <span class="metric-info" [attr.title]="'Total de enlaces en la página. Una buena estructura de enlaces ayuda a la navegación y SEO.'">ℹ️</span>
+                    </div>
+                    <div class="h4 mb-0 big-number">{{ links?.['total'] || 0 }}</div>
+                    <div class="small text-muted mt-1">
+                      {{ (links?.['total'] ?? 0) >= 10 ? '✅ Buena estructura de enlaces' : (links?.['total'] ?? 0) >= 5 ? '⚠️ Estructura básica' : '❌ Pocos enlaces' }}
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="d-flex align-items-center gap-1 mb-1">
+                      <span class="text-muted small">Enlaces internos</span>
+                      <span class="metric-info" [attr.title]="'Enlaces que apuntan a otras páginas de tu sitio. Ayudan a distribuir la autoridad y mejorar la navegación.'">ℹ️</span>
+                    </div>
+                    <div class="h4 mb-0 text-success big-number">{{ links?.['internal'] || 0 }}</div>
+                    <div class="small text-muted mt-1">
+                      {{ (links?.['internal'] ?? 0) >= 5 ? '✅ Buena estructura interna' : '⚠️ Podrías añadir más enlaces internos' }}
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="d-flex align-items-center gap-1 mb-1">
+                      <span class="text-muted small">Enlaces externos</span>
+                      <span class="metric-info" [attr.title]="'Enlaces que apuntan a otros sitios web. Enlazar a fuentes autorizadas puede mejorar la credibilidad.'">ℹ️</span>
+                    </div>
+                    <div class="h4 mb-0 text-primary big-number">{{ links?.['external'] || 0 }}</div>
+                    <div class="small text-muted mt-1">
+                      {{ (links?.['external'] ?? 0) > 0 ? '✅ Incluye referencias externas' : 'ℹ️ Sin enlaces externos' }}
+                    </div>
+                  </div>
+                </div>
+
+                <div *ngIf="headings">
+                  <h6 class="mb-2">
+                    <div class="d-flex align-items-center gap-1">
+                      <strong>Estructura de Encabezados</strong>
+                      <span class="metric-info" [attr.title]="'Una estructura jerárquica clara (H1 → H2 → H3) mejora la legibilidad y el SEO. Idealmente deberías tener 1 H1, varios H2 y H3 organizados jerárquicamente.'">ℹ️</span>
+                    </div>
+                  </h6>
+                  <p class="text-muted small mb-2">
+                    Una estructura jerárquica clara mejora la legibilidad y el SEO.
+                  </p>
+                  <div class="d-flex gap-2 flex-wrap mb-2">
+                    <c-badge color="primary">H1: {{ headings['h1'] || 0 }}</c-badge>
+                    <c-badge color="info">H2: {{ headings['h2'] || 0 }}</c-badge>
+                    <c-badge color="secondary">H3: {{ headings['h3'] || 0 }}</c-badge>
+                  </div>
+                  <div class="small text-muted">
+                    {{ (headings['h1'] ?? 0) === 1 && (headings['h2'] ?? 0) > 0 ? '✅ Estructura jerárquica correcta' : (headings['h1'] ?? 0) === 1 ? '⚠️ Falta estructura H2/H3' : '❌ Revisa la estructura de encabezados' }}
+                  </div>
+                  <div class="small text-muted mt-2" *ngIf="headings?.['samples']">
+                    <strong>Ejemplos de encabezados:</strong>
+                    <ul class="mb-0 mt-1">
+                      <li *ngFor="let h1 of (headings?.['samples']?.['h1'] || []) | slice:0:2">H1: "{{ h1 }}"</li>
+                      <li *ngFor="let h2 of (headings?.['samples']?.['h2'] || []) | slice:0:2">H2: "{{ h2 }}"</li>
+                    </ul>
+                  </div>
+                </div>
+              </c-card-body>
+            </c-card>
+          </div>
+        </div>
+
+        <!-- Top Palabras -->
+        <c-card class="border-0 shadow-sm mb-3 card-hover animate-fade-in-up animate-delay-2" *ngIf="top_words?.length">
+          <c-card-header><strong>🔑 Top Palabras Clave</strong></c-card-header>
+          <c-card-body>
+            <p class="text-muted small mb-3 narrative-text">
+              Las palabras más frecuentes en tu contenido revelan los temas principales. 
+              Esto te ayuda a entender si estás enfocándote en las palabras clave correctas para tu audiencia.
+            </p>
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Palabra</th>
+                    <th>Frecuencia</th>
+                    <th>% del total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let w of top_words | slice:0:10; let i = index" class="animate-slide-in-right" [style.animation-delay.ms]="i * 50">
+                    <td class="text-muted">{{ i+1 }}</td>
+                    <td><strong>{{ w[0] }}</strong></td>
+                    <td>{{ w[1] }}</td>
+                    <td class="small text-muted">
+                      {{ getWordPercentage(w[1], report['word_count']) }}%
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="small text-muted" *ngIf="top_words && top_words.length > 10">
+                Mostrando 10 de {{ top_words.length }}…
+              </div>
+            </div>
+          </c-card-body>
+        </c-card>
+
+        <!-- Hallazgos Unificados -->
+        <c-card class="border-0 shadow-sm card-hover animate-fade-in-up animate-delay-3" *ngIf="hallazgos?.length">
+          <c-card-header><strong>🔍 Hallazgos Detallados</strong></c-card-header>
+          <c-card-body>
+            <p class="text-muted small mb-3 narrative-text">
+              Esta es la lista completa de todos los problemas y oportunidades detectados. 
+              Cada hallazgo incluye su tipo, categoría, impacto y la persona o equipo sugerido para resolverlo.
+            </p>
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th>Tipo</th>
+                    <th>Categoría</th>
+                    <th>Título</th>
+                    <th>Impacto</th>
+                    <th>Prioridad</th>
+                    <th>Owner</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let h of hallazgos | slice:0:15" class="animate-slide-in-right">
+                    <td><c-badge color="secondary">{{ h['tipo'] }}</c-badge></td>
+                    <td>{{ h['categoria'] }}</td>
+                    <td>{{ h['titulo'] }}</td>
+                    <td class="small text-muted">
+                      U: {{ h['impacto_usuario'] }} · SEO: {{ h['impacto_seo'] }}
+                    </td>
+                    <td>
+                      <c-badge [color]="getPriorityColor(h['prioridad'])">
+                        {{ h['prioridad'] || '—' }}
+                      </c-badge>
+                    </td>
+                    <td class="small">{{ h['owner_sugerido'] }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="small text-muted" *ngIf="hallazgos.length > 15">
+                Mostrando 15 de {{ hallazgos.length }}…
+              </div>
+            </div>
+          </c-card-body>
+        </c-card>
+      </c-tab-panel>
+
+      <!-- 4) SO WHAT? - ¿Y qué? ¿Cuál es el siguiente paso? -->
+      <c-tab-panel [itemKey]="3" class="tab-content-wrapper">
+        <!-- Título y texto narrativo -->
+        <div class="section-gradient animate-fade-in-up mb-4">
+          <h2 class="mb-3">{{ getStepTitle(3) }}</h2>
+          <p class="narrative-text">
+            {{ getNarrativeText(3) }}
+          </p>
+        </div>
+
+        <div class="callout-box mb-4 animate-fade-in animate-delay-1">
+          <p class="mb-0">
+            <strong>🚀 De la teoría a la práctica:</strong> Ya tienes toda la información. 
+            Ahora te mostramos exactamente qué hacer, en qué orden y qué resultados puedes esperar. 
+            Empieza por los "Quick Wins" para ver mejoras rápidas, luego sigue con el plan de acción completo.
+          </p>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <!-- Quick Wins -->
+          <div class="col-12 col-lg-6 card-stagger" *ngIf="quickWins?.length">
+            <c-card class="shadow-sm border-0 h-100 card-hover">
+              <c-card-header>
+                <strong>⚡ Quick Wins - Mejoras Rápidas</strong>
+              </c-card-header>
+              <c-card-body>
+                <p class="text-muted small mb-3 narrative-text">
+                  Estas son mejoras que puedes implementar rápidamente con poco esfuerzo pero alto impacto. 
+                  Perfectas para empezar a ver resultados inmediatos.
+                </p>
+                <div class="vstack gap-3">
+                  <div *ngFor="let qw of quickWins" class="p-3 rounded border card-hover animate-slide-in-right">
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                      <strong>{{ qw['titulo'] }}</strong>
+                      <c-badge color="success" *ngIf="qw['due_in_dias']" class="badge-pulse">
+                        {{ qw['due_in_dias'] }} día{{ qw['due_in_dias'] > 1 ? 's' : '' }}
+                      </c-badge>
+                    </div>
+                    <div class="text-muted small mb-2">{{ qw['accion'] }}</div>
+                    <div class="small" *ngIf="qw['beneficio_esperado']">
+                      <strong>Beneficio esperado:</strong> {{ qw['beneficio_esperado'] }}
+                    </div>
+                    <div class="small text-muted mt-2" *ngIf="qw['kpi']">
+                      <strong>KPI objetivo:</strong> {{ qw['kpi'] }}
+                    </div>
+                  </div>
+                </div>
+              </c-card-body>
+            </c-card>
+          </div>
+
+          <!-- Next Steps -->
+          <div class="col-12 col-lg-6 card-stagger" *ngIf="nextSteps?.length">
+            <c-card class="shadow-sm border-0 h-100 card-hover">
+              <c-card-header>
+                <strong>📋 Próximos Pasos - Plan de Acción</strong>
+              </c-card-header>
+              <c-card-body>
+                <p class="text-muted small mb-3 narrative-text">
+                  Este es tu roadmap completo. Cada paso incluye tareas específicas, responsables sugeridos 
+                  y criterios de aceptación para asegurar que las mejoras se implementen correctamente.
+                </p>
+                <div class="vstack gap-3">
+                  <div *ngFor="let s of nextSteps" class="p-3 rounded border card-hover animate-slide-in-right">
+                    <strong>{{ s['titulo'] }}</strong>
+                    <div class="text-muted small mt-2 mb-2" *ngIf="s['entregable']">{{ s['entregable'] }}</div>
+                    <ul class="list-with-icons small mt-2 mb-2" *ngIf="s['tareas']?.length">
+                      <li *ngFor="let t of s['tareas']">{{ t }}</li>
+                    </ul>
+                    <div class="d-flex gap-2 flex-wrap mt-2">
+                      <c-badge color="info" *ngIf="s['owner']">{{ s['owner'] }}</c-badge>
+                      <c-badge color="primary" *ngIf="s['kpi']">{{ s['kpi'] }}</c-badge>
+                    </div>
+                    <div class="small text-muted mt-2" *ngIf="s['criterios_aceptacion']?.length">
+                      <strong>Criterios de aceptación:</strong>
+                      <ul class="mb-0 mt-1">
+                        <li *ngFor="let c of s['criterios_aceptacion']">{{ c }}</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </c-card-body>
+            </c-card>
+          </div>
+        </div>
+
+        <!-- Call to Action -->
+        <c-card class="border-0 shadow-sm bg-primary text-white animate-fade-in-up animate-delay-2">
+          <c-card-body class="text-center py-5">
+            <h5 class="mb-3">¿Listo para implementar estas mejoras?</h5>
+            <p class="mb-4 narrative-text" style="color: rgba(255,255,255,0.9);">
+              Ya conoces las oportunidades. Agenda tu demo-consultoría y te mostramos cómo implementarlas 
+              con ejemplos reales adaptados a tu caso específico. Te guiaremos paso a paso.
+            </p>
+            <button cButton color="light" size="lg" class="px-5 btn-animated">
+              Agendar Demo-Consultoría
+            </button>
+          </c-card-body>
+        </c-card>
+      </c-tab-panel>
+    </c-tabs-content>
+  </c-tabs>
+
+  <!-- Footer nav -->
+  <div class="d-flex justify-content-center gap-3 animate-fade-in-up navigation-buttons">
+    <button cButton color="secondary" (click)="prev()" [disabled]="step===0" class="btn-animated">
+      ← Anterior
+    </button>
+    <button cButton color="primary" (click)="next()" [disabled]="step===3" class="btn-animated">
+      Siguiente →
+    </button>
+  </div>
+</div>

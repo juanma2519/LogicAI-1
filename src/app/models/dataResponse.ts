@@ -40,6 +40,7 @@ export type SeoAuditEstrategia = 'mobile' | 'desktop';
 
 export interface SeoAuditItem {
   id: number;
+  lead_id:number;
   usuario_id: number;
   dominio: string;
   url: string;

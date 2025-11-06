@@ -6,17 +6,15 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Lead, Concepto, Estado } from '../../../models/lead';
 import { CommonModule } from '@angular/common';
-import { ContainerComponent, ButtonDirective, RowComponent, ColComponent, CardGroupComponent, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, PopoverModule, PopoverDirective, TableModule, UtilitiesModule, InputGroupTextDirective, ModalModule } from '@coreui/angular';
-import { IconModule, IconDirective } from '@coreui/icons-angular';
-import { WidgetsBrandComponent } from '../../widgets/widgets-brand/widgets-brand.component';
-import { WidgetsDemoComponent } from '../../widgets/widgets-demo/widgets-demo.component';
+import { ContainerComponent, ButtonDirective, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, PopoverModule, TableModule, UtilitiesModule, ModalModule } from '@coreui/angular';
+import { IconModule } from '@coreui/icons-angular';
 import { KeyvalueToNamePipe } from '../../../pipes/keyvalue-to-name.pipe';
 
 @Component({
   selector: 'app-lead-form',
   templateUrl: './leeds-form.component.html',
-  imports: [ContainerComponent, FormsModule, ModalModule, ButtonDirective, WidgetsBrandComponent, WidgetsDemoComponent, RowComponent, ColComponent, CardGroupComponent, CardComponent, CardBodyComponent, FormDirective,
-    InputGroupComponent, KeyvalueToNamePipe, ReactiveFormsModule, PopoverModule, PopoverDirective, IconModule, TableModule, UtilitiesModule, InputGroupTextDirective, IconDirective, CommonModule]
+  imports: [FormsModule, ModalModule, ButtonDirective, FormDirective,
+    KeyvalueToNamePipe, ReactiveFormsModule, PopoverModule, IconModule, TableModule, UtilitiesModule, CommonModule]
 })
 export class LeadFormComponent implements OnInit, OnChanges {
   @Input() visible = false;
@@ -42,7 +40,7 @@ export class LeadFormComponent implements OnInit, OnChanges {
     this.form = this.fb.group({
       id: [null],
       usuario_id: [null],
-      fecha_de_entrada: '',
+      fecha_entrada: '',
       empresa: '',
       nombre: '',
       web: '',
@@ -78,7 +76,7 @@ export class LeadFormComponent implements OnInit, OnChanges {
       this.form.reset({
         id: [null],
         usuario_id: [null],
-        fecha_de_entrada: '',
+        fecha_entrada: '',
         empresa: '',
         nombre: '',
         web: '',
@@ -111,7 +109,7 @@ export class LeadFormComponent implements OnInit, OnChanges {
     this.form.patchValue({
       id: lead.id ?? null,
       usuario_id: lead.usuario_id ?? null,
-      fecha_de_entrada: lead.fecha_de_entrada ?? '',
+      fecha_entrada: lead.fecha_entrada ?? '',
       empresa: lead.empresa ?? '',
       nombre: lead.nombre ?? '',
       web: lead.web ?? '',
@@ -133,7 +131,7 @@ export class LeadFormComponent implements OnInit, OnChanges {
     this.save.emit({
       id: value.id ?? undefined,
       usuario_id: value.usuario_id ?? undefined,
-      fecha_de_entrada: value.fecha_de_entrada ?? undefined,
+      fecha_entrada: value.fecha_entrada ?? undefined,
       empresa: value.empresa ?? undefined,
       nombre: value.nombre,
       web: value.web ?? undefined,

@@ -22,12 +22,21 @@ export class N8nService {
     return this.http.post(`${environment.apiUrl}/webhooks/${type}`, body, { responseType: 'blob' });
   }
 
-  puppeter(url: string, userId: number): Observable<any> {
-    const body = { url: url, usuario_id: userId }; // Puedes ampliar el objeto si necesitas más campos
+  puppeter(url: string, userId: number, leadId: number): Observable<any> {
+    const body = { url: url, usuario_id: userId, lead_id: leadId }; // Puedes ampliar el objeto si necesitas más campos
     return this.http.post(`${environment.apiUrl}/webhooks/puppeter`, body);
   }
 
   getScraps(userId: number): Observable<any> {
     return this.http.get<SeoAuditItem[]>(`${environment.apiUrl}/webhooks/puppeter/${userId}`);
+  }
+
+  getScrapById(consultoria_id: number): Observable<any> {
+    return this.http.get<SeoAuditItem[]>(`${environment.apiUrl}/webhooks/puppeter/consultoria/${consultoria_id}`);
+  }
+
+    // audit-seo.service.ts
+  enviarWhatsApp(consultoriaId: number, usuario_id: number, body: { to?: string; messageOverride?: string }) {
+    return this.http.post(`${environment.apiUrl}/webhooks/consultorias/${consultoriaId}/enviar-whatsapp/${usuario_id}`, body);
   }
 }

@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { N8nService } from '../../../services/n8n.service';
-import { ButtonDirective, CardBodyComponent, CardComponent, CardGroupComponent, ColComponent, ContainerComponent, FormControlDirective, FormDirective, InputGroupComponent, InputGroupTextDirective, RowComponent, UtilitiesModule } from '@coreui/angular';
+import { ButtonDirective, CardBodyComponent, CardComponent, ColComponent, ContainerComponent, FormControlDirective, InputGroupComponent, InputGroupTextDirective, RowComponent, UtilitiesModule } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
 import { CommonModule, NgStyle } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { WidgetsBrandComponent } from '../../widgets/widgets-brand/widgets-brand.component';
 import { WidgetsDemoComponent } from '../../widgets/widgets-demo/widgets-demo.component';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { UsageService } from '../../../services/usage.service';
@@ -12,8 +11,8 @@ import { UsageService } from '../../../services/usage.service';
 @Component({
   selector: 'app-n8n-input',
   templateUrl: './demo.component.html',
-  imports: [ContainerComponent, FormsModule, ButtonDirective, WidgetsBrandComponent, WidgetsDemoComponent, RowComponent, ColComponent, CardGroupComponent, CardComponent, CardBodyComponent, FormDirective,
-    InputGroupComponent, UtilitiesModule, InputGroupTextDirective, IconDirective, FormControlDirective, NgStyle, CommonModule]
+  imports: [ContainerComponent, FormsModule, ButtonDirective, WidgetsDemoComponent, RowComponent, ColComponent, CardComponent,
+    InputGroupComponent, UtilitiesModule, FormControlDirective, NgStyle, CommonModule]
 })
 export class DemoComponent {
   textToImage = '';

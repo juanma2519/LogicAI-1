@@ -2,7 +2,7 @@
   <c-card class="p-3 shadow-sm">
     <div class="d-flex align-items-center mb-3">
       <h5 class="mb-0">Configuración del agente</h5>
-      <span class="badge bg-light text-dark ms-2">{{ agent?.displayName }}</span>
+      <span class="badge bg-light text-dark ms-2">{{ agent.displayName }}</span>
       <div class="ms-auto d-flex gap-2">
         <button type="button" cButton color="secondary" variant="outline" (click)="cancel()">Cancelar</button>
         <button type="submit" cButton color="primary" [disabled]="loading">

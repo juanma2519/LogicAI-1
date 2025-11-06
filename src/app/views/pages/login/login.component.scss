@@ -1,3 +1,5 @@
+@use "sass:color";
+
 /* ====== Brand tokens (ajústalos si hace falta) ====== */
 $bg: #0b1220;            // fondo general
 $bg-2: #0f172a;          // superficies
@@ -90,7 +92,7 @@ c-input-group {
       outline: none;
       border-color: rgba(59,130,246,.55);
       box-shadow: 0 0 0 4px rgba(59,130,246,.20);
-      background-color: mix($bg-2, #000, 90%);
+      background-color: color.mix($bg-2, #000, 90%);
     }
   }
 
@@ -136,11 +138,11 @@ button.btn.btn-primary {
   &:active { transform: translateY(0); }
 }
 
-/* Link “Forgot password?” */
+/* Link "Forgot password?" */
 [cButton][color="link"] {
   color: $text-dim !important;
   text-decoration: none;
-  &:hover { color: lighten($text-dim, 8%) !important; }
+  &:hover { color: color.adjust($text-dim, $lightness: 8%) !important; }
 }
 
 /* ====== Card derecha (promo) ====== */

@@ -1,5 +1,5 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://dsol-b.vercel.app'
+    apiUrl: 'https://logic-ai-b-1.vercel.app'
   };
   

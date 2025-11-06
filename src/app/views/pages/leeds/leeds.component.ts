@@ -4,22 +4,23 @@
 // =====================================
 import { Component, OnInit } from '@angular/core';
 import { Lead, Concepto, Estado } from '../../../models/lead';
-import { finalize } from 'rxjs/operators';
+import { catchError, finalize } from 'rxjs/operators';
 import { LeedsService } from '../../../services/leads.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControlDirective, FormGroup, Validators, FormBuilder } from '@angular/forms';
-import { ContainerComponent, ButtonDirective, RowComponent, ColComponent, CardGroupComponent, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, PopoverModule, PopoverDirective, TableModule, UtilitiesModule, InputGroupTextDirective, ModalModule, ProgressComponent } from '@coreui/angular';
-import { IconModule, IconDirective } from '@coreui/icons-angular';
-import { WidgetsBrandComponent } from '../../widgets/widgets-brand/widgets-brand.component';
-import { WidgetsDemoComponent } from '../../widgets/widgets-demo/widgets-demo.component';
+import { ButtonDirective, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, PopoverModule, TableModule, UtilitiesModule, ModalModule, ProgressComponent } from '@coreui/angular';
+import { IconModule } from '@coreui/icons-angular';
 import { LeadFormComponent } from '../leeds-form/leeds-form.component';
 import { PaginationModule } from '@coreui/angular';
+import { N8nService } from '../../../services/n8n.service';
+import { of } from 'rxjs';
+import { AlertComponent, AlertHeadingDirective } from '@coreui/angular';
 
 @Component({
     selector: 'app-leeds',
     templateUrl: './leeds.component.html',
-    imports: [PaginationModule, ContainerComponent, FormsModule, ButtonDirective, WidgetsBrandComponent, WidgetsDemoComponent, RowComponent, ColComponent, CardGroupComponent, CardComponent, CardBodyComponent, FormDirective,
-        ProgressComponent, ModalModule, InputGroupComponent, LeadFormComponent, ReactiveFormsModule, PopoverModule, PopoverDirective, IconModule, TableModule, UtilitiesModule, InputGroupTextDirective, IconDirective, CommonModule]
+    imports: [AlertComponent, AlertHeadingDirective, PaginationModule, FormsModule, ButtonDirective, FormDirective,
+        ProgressComponent, ModalModule, LeadFormComponent, ReactiveFormsModule, PopoverModule, IconModule, TableModule, UtilitiesModule, CommonModule]
 })
 export class LeadsComponent implements OnInit {
     // Datos
@@ -28,6 +29,7 @@ export class LeadsComponent implements OnInit {
     conceptos: Concepto[] = [];
     estados: Estado[] = [];
     Math = Math;
+    scraping: boolean = false;
     // Modal generar leads
     showGenModal = false;
     generateForm: FormGroup;
@@ -109,7 +111,7 @@ export class LeadsComponent implements OnInit {
     // Ajusta de dónde tomas el usuario (auth service, etc.)
     private userId = Number(localStorage.getItem('userId'));
 
-    constructor(private api: LeedsService, private fb: FormBuilder,) {
+    constructor(private api: LeedsService, private fb: FormBuilder, private webhokService: N8nService) {
         this.generateForm = this.fb.group({
             negocio: ['', Validators.required],
             ciudad: ['', Validators.required],
@@ -233,12 +235,7 @@ export class LeadsComponent implements OnInit {
     get pages(): number[] {
         return Array.from({ length: this.totalPages }, (_, i) => i + 1);
     }
-    mostrarDesde() {
-        return this.totalItems === 0 ? 0 : (this.page - 1) * this.pageSize + 1;
-    }
-    mostrarHasta() {
-        return Math.min(this.page * this.pageSize, this.totalItems);
-    }
+
 
     // si ya tienes leadsFiltrados, úsalo tal cual; aquí solo derivamos el “slice”
     get baseList(): any[] {
@@ -262,7 +259,7 @@ export class LeadsComponent implements OnInit {
     nuevoLead(): void {
         this.leadSeleccionado = {
             usuario_id: this.userId,
-            fecha_de_entrada: '',
+            fecha_entrada: '',
             empresa: '',
             nombre: '',
             web: '',
@@ -421,4 +418,17 @@ export class LeadsComponent implements OnInit {
     cancelarGeneracion() {
         this.confirmGenerateModal = false;
     }
+
+    
+  scrapWeb(lead: Lead): void {
+    if (!lead) return;
+
+    const url = (lead.web as string).trim();
+    if (!url) return;
+    this.scraping = true;
+    this.webhokService.puppeter(url, this.userId, lead.id || 0).subscribe((updated) => {
+                // sustituye en memoria
+    this.scraping = false;
+    });
+  }
 }

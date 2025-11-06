@@ -2,18 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PricingService, ModelPricing } from '../../../services/pricing.service';
-import { ContainerComponent, ButtonDirective, RowComponent, CardComponent, PopoverModule, PopoverDirective, TableModule, UtilitiesModule, InputGroupTextDirective } from '@coreui/angular';
-import { IconModule, IconDirective } from '@coreui/icons-angular';
-import { WidgetsBrandComponent } from '../../widgets/widgets-brand/widgets-brand.component';
-import { WidgetsDemoComponent } from '../../widgets/widgets-demo/widgets-demo.component';
-import { LeadFormComponent } from '../leeds-form/leeds-form.component';
+import { ContainerComponent, ButtonDirective, CardComponent, PopoverModule, TableModule, UtilitiesModule } from '@coreui/angular';
+import { IconModule } from '@coreui/icons-angular';
 import { PricingWidgetComponent } from '../../widgets/widget-pricing/widget-pricing.component';
 
 @Component({
   selector: 'app-pricing-page',
   standalone: true,
-  imports: [PricingWidgetComponent, ContainerComponent, FormsModule, ButtonDirective, WidgetsBrandComponent, WidgetsDemoComponent, RowComponent, CardComponent,
-       LeadFormComponent, ReactiveFormsModule, PopoverModule, PopoverDirective, IconModule, TableModule, UtilitiesModule, InputGroupTextDirective, IconDirective, CommonModule],
+  imports: [PricingWidgetComponent, ContainerComponent, FormsModule, ButtonDirective, CardComponent,
+       ReactiveFormsModule, PopoverModule, IconModule, TableModule, UtilitiesModule, CommonModule],
   templateUrl: './pricing.component.html'
 })
 export class PricingPageComponent implements OnInit {
