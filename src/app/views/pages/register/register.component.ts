@@ -25,7 +25,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  imports: [ContainerComponent, AppToastComponent, ReactiveFormsModule, RowComponent, ColComponent, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, InputGroupTextDirective, IconDirective, FormControlDirective, ButtonDirective],
+  imports: [ContainerComponent, ReactiveFormsModule, RowComponent, ColComponent, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, InputGroupTextDirective, IconDirective, FormControlDirective, ButtonDirective],
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {

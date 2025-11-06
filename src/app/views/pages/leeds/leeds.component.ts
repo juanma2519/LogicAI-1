@@ -8,10 +8,8 @@ import { catchError, finalize } from 'rxjs/operators';
 import { LeedsService } from '../../../services/leads.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControlDirective, FormGroup, Validators, FormBuilder } from '@angular/forms';
-import { ContainerComponent, ButtonDirective, RowComponent, ColComponent, CardGroupComponent, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, PopoverModule, PopoverDirective, TableModule, UtilitiesModule, InputGroupTextDirective, ModalModule, ProgressComponent } from '@coreui/angular';
-import { IconModule, IconDirective } from '@coreui/icons-angular';
-import { WidgetsBrandComponent } from '../../widgets/widgets-brand/widgets-brand.component';
-import { WidgetsDemoComponent } from '../../widgets/widgets-demo/widgets-demo.component';
+import { ButtonDirective, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, PopoverModule, TableModule, UtilitiesModule, ModalModule, ProgressComponent } from '@coreui/angular';
+import { IconModule } from '@coreui/icons-angular';
 import { LeadFormComponent } from '../leeds-form/leeds-form.component';
 import { PaginationModule } from '@coreui/angular';
 import { N8nService } from '../../../services/n8n.service';
@@ -21,8 +19,8 @@ import { AlertComponent, AlertHeadingDirective } from '@coreui/angular';
 @Component({
     selector: 'app-leeds',
     templateUrl: './leeds.component.html',
-    imports: [AlertComponent, AlertHeadingDirective, PaginationModule, ContainerComponent, FormsModule, ButtonDirective, WidgetsBrandComponent, WidgetsDemoComponent, RowComponent, ColComponent, CardGroupComponent, CardComponent, CardBodyComponent, FormDirective,
-        ProgressComponent, ModalModule, InputGroupComponent, LeadFormComponent, ReactiveFormsModule, PopoverModule, PopoverDirective, IconModule, TableModule, UtilitiesModule, InputGroupTextDirective, IconDirective, CommonModule]
+    imports: [AlertComponent, AlertHeadingDirective, PaginationModule, FormsModule, ButtonDirective, FormDirective,
+        ProgressComponent, ModalModule, LeadFormComponent, ReactiveFormsModule, PopoverModule, IconModule, TableModule, UtilitiesModule, CommonModule]
 })
 export class LeadsComponent implements OnInit {
     // Datos

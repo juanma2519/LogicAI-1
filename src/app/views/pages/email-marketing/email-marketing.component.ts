@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { N8nService } from '../../../services/n8n.service';
@@ -29,18 +29,17 @@ type AnyObj = Record<string, any>;
     BadgeComponent,
     ButtonDirective,
     ProgressComponent,
-    RowComponent,
-    ColComponent,
     SpinnerComponent,
     Tabs2Module
   ]
 })
-export class EmailMarketingComponent implements OnInit {
+export class EmailMarketingComponent implements OnInit, AfterViewInit, OnDestroy {
   id!: number;
   loading = true;
   step = 0; // 0..3 (Answer First, Razones, Evidencia, So What?)
   progress = 0;
   Math = Math; // Exponer Math para usar en el template
+  private hideElevenLabsInterval?: any;
 
   consultoria?: AnyObj;
   report?: AnyObj;
@@ -66,6 +65,80 @@ export class EmailMarketingComponent implements OnInit {
   ngOnInit(): void {
     this.id = Number(this.route.snapshot.paramMap.get('id'));
     this.fetch();
+  }
+
+  ngAfterViewInit(): void {
+    // Ocultar widget de ElevenLabs inmediatamente
+    setTimeout(() => {
+      this.hideElevenLabsWidget();
+    }, 100);
+    
+    // Verificar periódicamente por si se carga después (menos frecuente)
+    this.hideElevenLabsInterval = setInterval(() => {
+      this.hideElevenLabsWidget();
+    }, 2000);
+    
+    // Usar MutationObserver solo para detectar nuevos elementos añadidos
+    const observer = new MutationObserver((mutations) => {
+      let shouldCheck = false;
+      mutations.forEach((mutation) => {
+        if (mutation.addedNodes.length > 0) {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === 1) { // Element node
+              const el = node as HTMLElement;
+              if (el.tagName === 'ELEVENLABS-CONVAI' || 
+                  el.querySelector?.('elevenlabs-convai') ||
+                  (el.tagName === 'IFRAME' && (el.getAttribute('src')?.includes('elevenlabs') || el.getAttribute('src')?.includes('convai')))) {
+                shouldCheck = true;
+              }
+            }
+          });
+        }
+      });
+      if (shouldCheck) {
+        this.hideElevenLabsWidget();
+      }
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: false // Solo observar hijos directos para mejor rendimiento
+    });
+    
+    // Guardar referencia para limpiar en ngOnDestroy
+    (this as any).elevenLabsObserver = observer;
+  }
+
+  ngOnDestroy(): void {
+    if (this.hideElevenLabsInterval) {
+      clearInterval(this.hideElevenLabsInterval);
+    }
+    if ((this as any).elevenLabsObserver) {
+      (this as any).elevenLabsObserver.disconnect();
+    }
+  }
+
+  private hideElevenLabsWidget(): void {
+    // Ocultar el elemento principal
+    const widget = document.querySelector('elevenlabs-convai');
+    if (widget) {
+      (widget as HTMLElement).style.display = 'none';
+      (widget as HTMLElement).style.visibility = 'hidden';
+      (widget as HTMLElement).style.opacity = '0';
+      (widget as HTMLElement).style.position = 'absolute';
+      (widget as HTMLElement).style.left = '-9999px';
+      (widget as HTMLElement).style.pointerEvents = 'none';
+    }
+    
+    // Buscar y ocultar cualquier iframe relacionado (solo si contiene elevenlabs o convai)
+    const iframes = document.querySelectorAll('iframe');
+    iframes.forEach(iframe => {
+      const src = iframe.getAttribute('src') || '';
+      if (src.includes('elevenlabs') || src.includes('convai')) {
+        iframe.style.display = 'none';
+        iframe.style.visibility = 'hidden';
+      }
+    });
   }
 
   private fetch() {
@@ -110,9 +183,15 @@ export class EmailMarketingComponent implements OnInit {
     const stepNum = typeof s === 'string' ? Number(s) : (s ?? 0);
     this.step = Math.max(0, Math.min(3, stepNum));
     this.updateProgress();
+    // Scroll al inicio de la página
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  next() { this.goTo(this.step + 1); }
-  prev() { this.goTo(this.step - 1); }
+  next() { 
+    this.goTo(this.step + 1);
+  }
+  prev() { 
+    this.goTo(this.step - 1);
+  }
 
   private updateProgress() {
     // 4 pasos → 0, 33, 66, 100
@@ -218,5 +297,10 @@ export class EmailMarketingComponent implements OnInit {
       default:
         return '';
     }
+  }
+
+  // Método para llamar al teléfono
+  callPhone() {
+    window.location.href = 'tel:+34632992220';
   }
 }

@@ -1,3 +1,5 @@
+@use "sass:color";
+
 /* ====== Tokens ====== */
 $bg: #0b1220;
 $bg-2: #0f172a;
@@ -81,7 +83,7 @@ c-input-group {
     &:focus {
       border-color: rgba(59,130,246,.55);
       box-shadow: 0 0 0 4px rgba(59,130,246,.20);
-      background-color: mix($bg-2, #000, 90%);
+      background-color: color.mix($bg-2, #000, 90%);
     }
   }
 

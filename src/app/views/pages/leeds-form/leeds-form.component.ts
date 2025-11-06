@@ -6,17 +6,15 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Lead, Concepto, Estado } from '../../../models/lead';
 import { CommonModule } from '@angular/common';
-import { ContainerComponent, ButtonDirective, RowComponent, ColComponent, CardGroupComponent, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, PopoverModule, PopoverDirective, TableModule, UtilitiesModule, InputGroupTextDirective, ModalModule } from '@coreui/angular';
-import { IconModule, IconDirective } from '@coreui/icons-angular';
-import { WidgetsBrandComponent } from '../../widgets/widgets-brand/widgets-brand.component';
-import { WidgetsDemoComponent } from '../../widgets/widgets-demo/widgets-demo.component';
+import { ContainerComponent, ButtonDirective, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, PopoverModule, TableModule, UtilitiesModule, ModalModule } from '@coreui/angular';
+import { IconModule } from '@coreui/icons-angular';
 import { KeyvalueToNamePipe } from '../../../pipes/keyvalue-to-name.pipe';
 
 @Component({
   selector: 'app-lead-form',
   templateUrl: './leeds-form.component.html',
-  imports: [ContainerComponent, FormsModule, ModalModule, ButtonDirective, WidgetsBrandComponent, WidgetsDemoComponent, RowComponent, ColComponent, CardGroupComponent, CardComponent, CardBodyComponent, FormDirective,
-    InputGroupComponent, KeyvalueToNamePipe, ReactiveFormsModule, PopoverModule, PopoverDirective, IconModule, TableModule, UtilitiesModule, InputGroupTextDirective, IconDirective, CommonModule]
+  imports: [FormsModule, ModalModule, ButtonDirective, FormDirective,
+    KeyvalueToNamePipe, ReactiveFormsModule, PopoverModule, IconModule, TableModule, UtilitiesModule, CommonModule]
 })
 export class LeadFormComponent implements OnInit, OnChanges {
   @Input() visible = false;

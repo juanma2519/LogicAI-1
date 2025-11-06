@@ -4,8 +4,6 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angul
 import { PricingService, ModelPricing } from '../../../services/pricing.service';
 import { ContainerComponent, ButtonDirective, CardComponent, PopoverModule, TableModule, UtilitiesModule } from '@coreui/angular';
 import { IconModule } from '@coreui/icons-angular';
-import { WidgetsBrandComponent } from '../../widgets/widgets-brand/widgets-brand.component';
-import { WidgetsDemoComponent } from '../../widgets/widgets-demo/widgets-demo.component';
 
 type DemoKey =
   | 'text-to-image'
@@ -17,7 +15,7 @@ type DemoKey =
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [ContainerComponent, FormsModule, ButtonDirective, WidgetsBrandComponent, WidgetsDemoComponent, CardComponent,
+  imports: [ContainerComponent, FormsModule, ButtonDirective, CardComponent,
          ReactiveFormsModule, PopoverModule, IconModule, TableModule, UtilitiesModule, CommonModule],
   templateUrl: './settings.component.html'
 })

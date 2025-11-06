@@ -4,19 +4,16 @@ import { Message } from '../../../models/message';
 import { MessagesService } from '../../../services/messages.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ContainerComponent, ButtonDirective, RowComponent, ColComponent, CardGroupComponent, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, PopoverModule, PopoverDirective, TableModule, UtilitiesModule, InputGroupTextDirective, FormControlDirective } from '@coreui/angular';
-import { IconModule, IconDirective } from '@coreui/icons-angular';
-import { WidgetsBrandComponent } from '../../widgets/widgets-brand/widgets-brand.component';
-import { WidgetsDemoComponent } from '../../widgets/widgets-demo/widgets-demo.component';
-import { LeadFormComponent } from '../leeds-form/leeds-form.component';
+import { ButtonDirective, CardComponent, CardBodyComponent, TableModule, UtilitiesModule } from '@coreui/angular';
+import { IconModule } from '@coreui/icons-angular';
 
 import { freeSet } from '@coreui/icons';
 
 @Component({
   selector: 'app-messages',
   templateUrl: './messages.component.html',
-  imports: [ContainerComponent, FormsModule, ButtonDirective, WidgetsBrandComponent, WidgetsDemoComponent, RowComponent, ColComponent, CardGroupComponent, CardComponent, CardBodyComponent, FormDirective,
-        InputGroupComponent, LeadFormComponent, ReactiveFormsModule, PopoverModule, PopoverDirective, IconModule, TableModule, UtilitiesModule, InputGroupTextDirective, IconDirective, FormControlDirective, CommonModule]
+  imports: [FormsModule, ButtonDirective, CardComponent,
+        ReactiveFormsModule, IconModule, TableModule, UtilitiesModule, CommonModule]
 })
 
 export class MessagesComponent implements OnInit, OnDestroy {

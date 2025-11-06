@@ -31,41 +31,23 @@ type ChartData = {
     CommonModule,
 
     // CoreUI Angular
-    TabsComponent,
     CardComponent,
-    ProgressComponent,
     BadgeComponent,
     ButtonDirective,
     IconModule,
-    WidgetsDemoComponent,
-    PricingWidgetComponent,
-    WidgetsDropdownComponent,
-    CardComponent,
     CardBodyComponent,
-    RowComponent,
-    ColComponent,
-    ReactiveFormsModule,
-    ButtonGroupComponent,
-    FormCheckLabelDirective,
     ChartjsComponent,
-    NgStyle,
-    CardFooterComponent,
-    GutterDirective,
-    ProgressComponent,
-    WidgetsBrandComponent,
     CardHeaderComponent,
     TableDirective,
-    AvatarComponent,
     Tabs2Module,
     ChartjsModule,
     AccordionModule,
     AccordionItemComponent,
     TemplateIdDirective,
     AccordionButtonDirective,
-    AgentSettingsComponent,
     GridModule, CardModule, ButtonModule, AlertModule,
-    PaginationModule, ContainerComponent, FormsModule, CardGroupComponent, FormDirective,
-    ModalModule, InputGroupComponent, LeadFormComponent, PopoverModule, PopoverDirective, IconModule, TableModule, UtilitiesModule, InputGroupTextDirective, IconDirective]
+    PaginationModule, FormsModule,
+    ModalModule, PopoverModule, TableModule, UtilitiesModule]
 })
 export class AuditSeoComponent implements OnInit, OnDestroy {
 

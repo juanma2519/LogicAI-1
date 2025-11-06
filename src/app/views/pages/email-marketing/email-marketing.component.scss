@@ -1,5 +1,96 @@
 // Animaciones y estilos para Email Marketing Component
 
+// Ocultar widget de ElevenLabs - selectores más específicos
+elevenlabs-convai {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+  pointer-events: none !important;
+}
+
+// Ocultar iframes relacionados solo si contienen elevenlabs o convai en la URL
+iframe[src*="elevenlabs"],
+iframe[src*="convai"] {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+// Evitar salto de línea en tabs en móvil
+c-tabs-list {
+  button[cTab] {
+    white-space: nowrap;
+    font-size: 0.875rem;
+    
+    @media (max-width: 576px) {
+      font-size: 0.75rem;
+      padding: 0.5rem 0.75rem;
+    }
+  }
+}
+
+// Widget de llamada telefónica flotante
+.phone-widget {
+  position: fixed;
+  bottom: 100px; // Más arriba para no interferir con los botones
+  right: 30px;
+  z-index: 999; // Menor que los botones de navegación
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 50px;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+  animation: pulse-phone 2s infinite;
+  
+  &:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+  }
+  
+  &:active {
+    transform: translateY(-2px) scale(1.02);
+  }
+  
+  .phone-widget-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    padding: 8px;
+  }
+  
+  .phone-widget-text {
+    font-weight: 600;
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+  
+  // En pantallas pequeñas, moverlo más arriba
+  @media (max-width: 768px) {
+    bottom: 120px;
+    right: 20px;
+    padding: 14px 20px;
+  }
+}
+
+@keyframes pulse-phone {
+  0%, 100% {
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  }
+  50% {
+    box-shadow: 0 8px 35px rgba(102, 126, 234, 0.6), 0 0 0 10px rgba(102, 126, 234, 0.1);
+  }
+}
+
 // Header mejorado
 .header-enhanced {
   background: linear-gradient(135deg, rgba(13, 110, 253, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
@@ -191,18 +282,12 @@
   transition: width 0.8s ease-out;
 }
 
-// Botones con efecto
-.btn-animated {
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
+// Botones de navegación
+.navigation-buttons {
+  position: relative;
+  z-index: 1000; // Mayor que el widget de llamada
+  margin-bottom: 20px; // Espacio adicional en la parte inferior
+  padding: 20px 0; // Padding para evitar solapamiento
 }
 
 // Tab content con fade

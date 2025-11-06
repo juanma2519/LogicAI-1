@@ -4,17 +4,15 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup, FormsModule } from '@angular/forms';
 import { ProfileService, UsuarioApi } from '../../../services/profile.service';
 import { Router } from '@angular/router';
-import { ContainerComponent, ButtonDirective, RowComponent, ColComponent, CardGroupComponent, CardComponent, CardBodyComponent, FormDirective, PopoverModule, TableModule, UtilitiesModule, BadgeComponent, FormCheckLabelDirective, FormCheckComponent, FormCheckInputDirective } from '@coreui/angular';
+import { ButtonDirective, PopoverModule, TableModule, UtilitiesModule, BadgeComponent, FormCheckLabelDirective, FormCheckComponent, FormCheckInputDirective, CardComponent, CardBodyComponent, CardHeaderComponent } from '@coreui/angular';
 import { IconModule, IconDirective } from '@coreui/icons-angular';
-import { WidgetsBrandComponent } from '../../widgets/widgets-brand/widgets-brand.component';
-import { WidgetsDemoComponent } from '../../widgets/widgets-demo/widgets-demo.component';
 import { WhatsAppCredentialDTO, WhatsAppService } from '../../../services/whatsapp.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, BadgeComponent, FormCheckComponent, FormCheckInputDirective, FormCheckLabelDirective, ReactiveFormsModule, ContainerComponent, FormsModule, ButtonDirective, WidgetsBrandComponent, WidgetsDemoComponent, RowComponent, ColComponent, CardGroupComponent, CardComponent, CardBodyComponent, FormDirective,
-       PopoverModule, IconModule, TableModule, UtilitiesModule, IconDirective],
+  imports: [CommonModule, BadgeComponent, FormCheckComponent, FormCheckInputDirective, FormCheckLabelDirective, ReactiveFormsModule, FormsModule, ButtonDirective,
+       PopoverModule, IconModule, TableModule, UtilitiesModule, IconDirective, CardComponent],
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {
