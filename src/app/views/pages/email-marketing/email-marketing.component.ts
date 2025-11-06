@@ -56,6 +56,7 @@ export class EmailMarketingComponent implements OnInit, AfterViewInit, OnDestroy
   recomendaciones: AnyObj[] = [];
   quickWins: AnyObj[] = [];
   nextSteps: AnyObj[] = [];
+  private _cachedReasons?: AnyObj[];
 
   constructor(
     private route: ActivatedRoute,
@@ -171,6 +172,9 @@ export class EmailMarketingComponent implements OnInit, AfterViewInit, OnDestroy
         this.quickWins = this.report?.['quick_wins'] ?? [];
         this.nextSteps = this.report?.['next_steps'] ?? [];
 
+        // Invalidar cache de razones cuando se cargan nuevos datos
+        this._cachedReasons = undefined;
+
         this.updateProgress();
       },
       error: () => {},
@@ -230,6 +234,11 @@ export class EmailMarketingComponent implements OnInit, AfterViewInit, OnDestroy
 
   // Razones principales - Recomendaciones IA y top risks
   getReasons(): AnyObj[] {
+    // Cachear el resultado para evitar re-renderizados innecesarios
+    if (this._cachedReasons) {
+      return this._cachedReasons;
+    }
+    
     const reasons: AnyObj[] = [];
     
     // Agregar top risks como razones principales
@@ -254,11 +263,13 @@ export class EmailMarketingComponent implements OnInit, AfterViewInit, OnDestroy
       });
     }
 
-    return reasons.length ? reasons : [{
+    this._cachedReasons = reasons.length ? reasons : [{
       title: 'Base correcta con margen de optimización',
       desc: 'Los datos sugieren mejoras rápidas en rendimiento, accesibilidad y SEO.',
       prioridad: 'media'
     }];
+    
+    return this._cachedReasons;
   }
 
   getPriorityColor(prioridad: string): string {

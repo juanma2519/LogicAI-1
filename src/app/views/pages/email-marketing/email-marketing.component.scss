@@ -184,7 +184,7 @@ c-tabs-list button[cTab] {
 
 c-tab-panel {
   display: block;
-  animation: fadeIn 0.4s ease-out;
+  animation: fadeIn 0.4s ease-out forwards;
 }
 
 .big-number {
@@ -235,8 +235,8 @@ c-tab-panel {
 }
 
 .card-stagger {
-  opacity: 0;
   animation: fadeInUp 0.6s ease-out forwards;
+  animation-fill-mode: both;
   &:nth-child(1) { animation-delay: 0.1s; }
   &:nth-child(2) { animation-delay: 0.2s; }
   &:nth-child(3) { animation-delay: 0.3s; }
