@@ -301,6 +301,6 @@ export class EmailMarketingComponent implements OnInit, AfterViewInit, OnDestroy
 
   // Método para llamar al teléfono
   callPhone() {
-    window.location.href = 'tel:+34632992220';
+    window.location.href = 'tel:+34614556250';
   }
 }
